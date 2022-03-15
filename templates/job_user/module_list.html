@@ -1,0 +1,133 @@
+{% extends 'aside_menu.html' %}
+{% load static %}
+{% block menu_content %}
+    <div class="w-100 h-100">
+        <div class="row w-100 ml-0 mr-0" style="margin: 90px 0px; padding: 0px 50px;">
+            <h1>Module List</h1>
+        </div>
+        <form class="search" action="{% url 'job_user:module_search' %}" method="GET">
+            {% csrf_token %}
+            <select id="search_select" name="searchCondition">
+<!--                 {% if request.GET.searchCondition == 'module_name' %}
+                    <option value="module_name" selected>Module name</option>
+                {% endif %}
+                {% if request.GET.searchCondition == 'module_category' %}
+                    <option value="module_category" selected>Category</option>
+                {% endif %}
+                {% if request.GET.searchCondition == 'paper_link' %}
+                    <option value="paper_link" selected>Paper link</option>
+
+                {% else %}
+                    <option value="module_name">Module name</option>
+                    <option value="module_category">Category</option>
+                    <option value="paper_link">Paper link</option>
+                {% endif %} -->
+                <option value="module_name" selected>Module name</option>
+            </select>
+            <div class="test">
+                <input type="search" class="SearchContent" name="keyword" placeholder="Search Input"
+                       value="{% if request.GET.keyword %}{{ request.GET.keyword }}{% endif %}">
+            </div>
+            <span><input type="submit" value="search"></span>
+        </form>
+        <div class="listWrap">
+            <table class="moduleTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Thumbnail</th>
+                    <th>Module name</th>
+                    <th>Level</th>
+                    <th>Date created</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for module in modules %}
+                    <tr  {% if user.level >= module.module_level %}
+                        onclick="location.href='{% url "job_user:module_detail" pk=module.id %}'"
+                    {% else %}
+                        onclick="fn_module_no_permission()"
+                    {% endif %}
+                    >
+                        <td>
+                            {{ forloop.counter0 | add:modules.start_index }}
+                        </td>
+                        <td>
+                            {% if module.module_img %}
+                                <div class="thumbnail">
+                                    <img src="{{ module.module_img.url }}"/>
+                                </div>
+
+                            {% else %}
+                                No Img
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="dot">
+                                {{ module.module_name }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ module.get_module_level_display }}
+                        </td>
+                        <td>
+                            {{ module.create_date|date:'Y-m-d' }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="page-wrapper">
+                <ul class="pagination justify-content-center">
+                    <!-- 이전 페이지 -->
+                    {% if modules.has_previous %}
+                        <li class="page-item prev">
+                            <a href="?page={{ modules.previous_page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}"
+                               class="page-link"><img
+                                    src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev"></a>
+                        </li>
+                    {% endif %}
+                    <!-- 페이지 범위 및 현재 페이지 -->
+                    {% for page_number in modules.paginator.page_range %}
+                        {% if page_number == modules.number %}
+                            <li class="page-item active">
+                                <a class="page-link"
+                                   href="?page={{ page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}"
+                                   style="color:var(--color-white)">{{ page_number }}
+                                </a>
+                            </li>
+
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}">{{ page_number }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- 다음 페이지 -->
+                    {% if modules.has_next %}
+                        <li class="page-item next">
+                            <a class="page-link"
+                               href="?page={{ modules.next_page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}"><img
+                                    src="{% static 'img/arrow-next.png' %}" alt="arrow-next"></a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+        });
+
+        function fn_module_no_permission() {
+            alert('You do not have access to the module');
+            return false;
+        }
+
+    </script>
+{% endblock %}
+
+

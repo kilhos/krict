@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+    <div class="formWrap" style="height: 100% !important;">
+        <div><b>Login</b></div>
+        <form method="post" style="margin-top: 15px;">
+            <p style="margin-bottom: 5px;">ID</p> {{ form.username }}
+            <p style="margin-bottom: 5px;">Password</p> {{ form.password }}
+            {% for error in form.non_field_errors %}
+                <div class="invalid-msg d-flex justify-content-center">
+                    {{ error }}
+                </div>
+            {% endfor %}
+            <input class="submit-btn-color" type="submit" value="Login"/>
+            {% csrf_token %}
+        </form>
+        <div class="loginForget">
+            <a href="{% url 'accounts:recovery_id' %}"><p>Forget ID</p></a>/
+            <a href="{% url 'accounts:recovery_pw' %}"><p>Password?</p></a>
+        </div>
+        <div>
+            <a href="{% url 'accounts:signup' %}"><p>Sign up</p></a>
+        </div>
+    </div>
+{% endblock %}

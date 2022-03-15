@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+    <div class="contentWrap">
+        <div class="leftLayout">
+            <div class="menuList">
+                <h2>Member Manage</h2>
+                <ul>
+                    <li><a href="{% url 'job_manager:member_manager' %}">Member List</a></li>
+                </ul>
+            </div>
+            <div class="menuList">
+                <h2>Module Manage</h2>
+                <ul>
+                    <li><a href="{% url 'job_manager:module_manager' %}">Module List</a></li>
+                    <li><a href="{% url 'job_manager:module_api_manage' %}">API List</a></li>
+                </ul>
+            </div>
+        </div>
+        {% block menu_content %}
+        {% endblock %}
+    </div>
+{#    <script>#}
+{#        new WOW().init();#}
+{#    </script>#}
+{% endblock %}

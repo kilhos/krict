@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+    <div class="formWrap">
+        <p class="login"><b>ID search</b></p>
+        <form style="margin-top: 15px;" action="">{% csrf_token %}
+            <p style="margin-bottom: 5px;">Name</p> {{ form.name }}
+            <p style="margin-bottom: 5px;">E-mail</p> {{ form.email }}
+            <button class="submit-btn-color" type="button" id="find_id" style="border-radius:5px;">Search</button>
+        </form>
+        <div class="goback">
+            <p><a href="{% url 'accounts:login' %}">Go back</a></p>
+        </div>
+    </div>
+    <script>
+        $('#find_id').click(function () {
+            const name = $("#id_name").val();
+            const email = $("#id_email").val();
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'accounts:ajax_id' %}",
+                dataType: "json",
+                data: {
+                    'name': name,
+                    'email': email,
+                },
+                success: function (data) {
+                    alert('Your ID : ' + data.result_id)
+                },
+                error: function () {
+                    if (name == "" || email == "") {
+                        alert('Please enter your name and email.');
+                    } else {
+                        alert('The information you entered does not match or does not exist.');
+                    }
+                },
+            });
+        })
+    </script>
+{% endblock %}

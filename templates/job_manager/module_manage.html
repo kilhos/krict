@@ -1,0 +1,139 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+{% block script %}
+    $('#submitBtn').on('click', function () {
+    console.log($('#searchCondition').val());
+    console.log($('#keyword').val());
+    var json_object = {
+    "keyword": '' + $('#keyword').val(),
+    "searchCondition": '' + $('#searchCondition').val()
+    }
+    $.ajax({
+    url: '/module_search',
+    type: 'POST',
+    datatype: 'json',
+    data: json_object,
+    success: function () {
+    alert('성공')
+    },
+    error: function () {
+    }
+
+    })
+    })
+{% endblock %}
+{% block menu_content %}
+    <div class="w-100 h-100">
+        <div class="row w-100 ml-0 mr-0" style="margin: 90px 0px; padding: 0px 50px;">
+            <h1>Module List</h1>
+        </div>
+        <form class="search" action="{% url 'job_manager:module_search' %}" method="GET">
+            {% csrf_token %}
+            <select id="search_select" name="searchCondition">
+                {% if request.GET.searchCondition == 'module_name' %}
+                    <option value="module_name" selected>Module name</option>
+                {% else %}
+                    <option value="module_name">Module name</option>
+                {% endif %}
+            </select>
+            <div class="test">
+                <input type="search" class="SearchContent" name="keyword" placeholder="Search Input"
+                       value="{% if request.GET.keyword %}{{ request.GET.keyword }}{% endif %}">
+            </div>
+            <span><input type="submit" value="search"></span>
+        </form>
+        <div class="listWrap">
+            <table class="jobTable">
+                <thead>
+                <tr>
+                    <th style="width:5%">#</th>
+                    <th style="width:25%">Thumbnail</th>
+                    <th style="width:45%">Module name</th>
+                    <th style="width:10%">Level</th>
+                    <th style="width:15%">Date created</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for module in modules %}
+                    <tr>
+                        <td onclick="location.href='{% url "job_manager:module_detail" pk=module.id %}'">
+                            {{ forloop.counter0 | add:modules.start_index }}
+                        </td>
+                        <td onclick="location.href='{% url "job_manager:module_detail" pk=module.id %}'">
+                            {% if module.module_img %}
+                                <div class="thumbnail">
+                                    <img src="{{ module.module_img.url }}"/>
+                                </div>
+                            {% else %}
+                                No Img
+                            {% endif %}
+                        </td>
+
+                        <td onclick="location.href='{% url "job_manager:module_detail" pk=module.id %}'">
+                            <a href="{{ module.get_absolute_url }}">
+                                {{ module.module_name }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ module.get_module_level_display }}
+                        </td>
+                        <td onclick="location.href='{% url "job_manager:module_detail" pk=module.id %}'">
+                            {{ module.create_date|date:'Y-m-d' }}
+                        </td>
+                        {% comment %}
+                        <td>
+                            <i class="xi-spinner-1 xi-spin" onclick="go_modify_page({{ module.pk }})"></i>
+                        </td>{% endcomment %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="page-wrapper">
+                <ul class="pagination justify-content-center">
+                    <!-- 이전 페이지 -->
+                    {% if modules.has_previous %}
+                        <li class="page-item prev">
+                            <a href="?page={{ modules.previous_page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}"
+                               class="page-link"><img
+                                    src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev"></a>
+                        </li>
+                    {% endif %}
+                    <!-- 페이지 범위 및 현재 페이지 -->
+                    {% for page_number in modules.paginator.page_range %}
+                        {% if page_number == modules.number %}
+                            <li class="page-item active">
+                                <a class="page-link"
+                                   href="?page={{ page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}"
+                                   style="color:var(--color-white)">{{ page_number }}
+                                </a>
+                            </li>
+
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?page={{ page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}">{{ page_number }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- 다음 페이지 -->
+                    {% if modules.has_next %}
+                        <li class="page-item next">
+                            <a class="page-link"
+                               href="?page={{ modules.next_page_number }}&searchCondition={{ request.GET.searchCondition }}&keyword={{ request.GET.keyword }}"><img
+                                    src="{% static 'img/arrow-next.png' %}" alt="arrow-next"></a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function go_modify_page(pk) {
+            location.href = '/manager/module_modify/' + pk;
+        }
+
+    </script>
+{% endblock %}
+
+

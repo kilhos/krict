@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+    <div class="contentWrap">
+        <div class="leftLayout">
+            <div class="menuList">
+                <h2>My Job</h2>
+                <ul>
+                    <li><a href="{% url 'job_user:job_list' %}">Job List</a></li>
+                    <li><a href="{% url 'job_user:job_result_page_list' %}">Result List</a></li>
+                </ul>
+            </div>
+            <div class="menuList">
+                <h2>Module</h2>
+                <ul>
+                    <li><a href="{% url 'job_user:module_list' %}">Module List</a></li>
+                </ul>
+            </div>
+        </div>
+        {% block menu_content %}{% endblock %}
+    </div>
+{#    <script>#}
+{#        new WOW().init();#}
+{#    </script>#}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+    {% comment %}<pre>
+        id: {{ user.username }}
+        password: {{ user.password }}
+        first_name: {{ user.first_name }}
+        last_name: {{ user.last_name }}
+        institution: {{ user.institution }}
+        state: {{ user.state }}
+        role: {{ user.role }}
+        level: {{ user.level }}
+        department: {{ user.department }}
+        employee_no: {{ user.employee_no }}
+        mobile_phone: {{ user.mobile_phone }}
+        company_phone: {{ user.company_phone }}
+    </pre>{% endcomment %}
+    <div>
+        <div>
+            <lable for="username">Id</lable>
+            <input id="username" name="username" readonly value="{{ user.username }}">
+            <br>
+            <label for="password">Password</label>
+            <input type="password" name="password" readonly value="{{ user.password }}">
+            <br>
+            <label for="firstName">First Name</label>
+            <input type="text" name="firstName" id="firstName" readonly value="{{ user.first_name }}"/>
+            <br>
+            <label for="lastName">Last Name</label>
+            <input type="text" name="lastName" id="lastName" readonly value="{{ user.last_name }}"/>
+            <br>
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" name="phoneNumber" id="phoneNumber" readonly value="{{ user.company_phone }}"/>
+            <br>
+            <label for="mobilePhoneNumber">MobilePhoneNumber</label>
+            <input type="text" name="mobilePhoneNumber" id="mobilePhoneNumber" readonly value="{{ user.mobile_phone }}"/>
+            <br>
+            <input type="hidden" name="id" id="id" readonly value="{{ user.id }}"/>
+            <input type="button" value="Modify" id="modifyBtn">
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('#modifyBtn').on('click', function () {
+            location.href = "/profile_modify/";
+        })
+    </script>
+{% endblock %}

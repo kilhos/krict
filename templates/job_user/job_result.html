@@ -1,0 +1,121 @@
+{% extends 'aside_menu.html' %}
+{% load static %}
+{% block menu_content %}
+    <script type="text/javascript" src="{% static 'js/job/job_result.js' %}"></script>
+    <div class="w-100 h-100">
+        <div class="row w-100 ml-0 mr-0" style="margin: 90px 0px; padding: 0px 50px;">
+            <h1>Result List</h1>
+            {#                <button class="button register-btn-color"#}
+            {#                        onclick="location.href={% url 'job_user:job_register_page' %}">#}
+            {#                    Analysis#}
+            {#                </button>#}
+        </div>
+        <form class="search" action="{% url 'job_user:job_result_page_list' %}">
+            {% csrf_token %}
+            <select id="search_select" name="search_select">
+                <option value="job_name" {% if request.GET.search_select == "job_name" %}selected{% endif %}>Job name</option>
+                <option value="module" {% if request.GET.search_select == "module" %}selected{% endif %}>Module</option>
+                <option value="writer" {% if request.GET.search_select == "writer" %}selected{% endif %}>Writer</option>
+            </select>
+            <div class="test">
+                <input type="search" class="SearchContent" name="search_text" placeholder="Search Input"
+                       value="{% if request.GET.search_text %}{{ request.GET.search_text }}{% endif %}">
+            </div>
+            <span><input type="submit" value="Search"></span>
+        </form>
+        <div class="listWrap">
+            <table class="moduleTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Job name</th>
+                    <th>Module</th>
+                    <th>Writer</th>
+                    <th>Date created</th>
+                    <th>Report</th>
+                    <th style="text-align: center;">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for res in result %}
+                    {% if res.job.job_status == 'complete' %}
+                        <tr onclick="location.href='{% url "job_user:job_result_page" pk=res.job_id %}'">
+                            <th>{{ forloop.counter0 | add:page_obj.start_index }}</th>
+                            <td>
+                                <div class="dot">{{ res.job.job_name }}</div>
+                            </td>
+                            <td>
+                                <div class="dot">{{ res.job.module_api.module.module_name }}</div>
+                            </td>
+                            <td>
+                                <div class="dot">{{ res.job.user.name }}</div>
+                            </td>
+                            <td>{{ res.job.create_date|date:'Y-m-d' }}</td>
+                            <td style="text-align: center">
+                                <div class="flexbox">
+                                    <a href="{% url 'job_user:job_result_report' pk=res.pk %}"><p>
+                                        <img src="{% static 'img/pdf.png' %}">{{ result_detail.job.job_name }}</p></a>
+                                    <a href="{% url 'job_user:job_result_report_csv' pk=res.pk %}"><p>
+                                        <img src="{% static 'img/csv.png' %}">{{ result_detail.job.job_name }}</p></a>
+                                </div>
+                            </td>
+                            <td style="text-align: center;">
+                                <button class="button-status completed"><a href="#">{{ res.job.job_status }}</a>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if is_paginated %}
+                <div class="page-wrapper">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item prev">
+                                <a class="page-link"
+                                   href="?page={{ page_obj.previous_page_number }}&job_name={{ request.GET.job_name }}"
+                                   tabindex="-1"><img
+                                        src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev"></a>
+                            </li>
+                        {% else %}
+                            <li class="page-item prev visibility_hidden">
+                                <a class="page-link" href="#" tabindex="-1"></a>
+                            </li>
+                        {% endif %}
+
+                        {% for page in page_range %}
+                            {% if page == page_obj.number %}
+                                <li class="page-item active">
+                                    <a class="page-link" style="color:var(--color-white)"
+                                       href="?page={{ page }}&job_name={{ request.GET.job_name }}">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?page={{ page }}&job_name={{ request.GET.job_name }}">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item next">
+                                <a class="page-link"
+                                   href="?page={{ page_obj.next_page_number }}&job_name={{ request.GET.job_name }}"><img
+                                        src="{% static 'img/arrow-next.png' %}" alt="arrow-prev"></a>
+                            </li>
+                        {% else %}
+                            <li class="page-item next visibility_hidden">
+                                <a class="page-link" href="#"></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,395 @@
+{% extends 'aside_menu.html' %}
+{% load static %}
+{% block menu_content %}
+    <div class="w-100 h-100">
+        <div class="row w-100 ml-0 mr-0" style="margin: 90px 0px; padding: 0px 50px;">
+            <h1>Result detail</h1>
+        </div>
+        <div style="padding: 0px 40px 40px 50px;">
+            <div class="detailWrap">
+                <div>
+                    <strong style="width: 118px;">Job name</strong>
+                    <div class="dot400"><p>{{ result_detail.job.job_name }}</p></div>
+                </div>
+                <div style="margin-right: 20px;">
+                    <strong>Writer</strong>
+                    <p>{{ result_detail.job.user.name }}</p>
+                </div>
+                <div>
+                    <strong>Report date</strong>
+                    <p>{{ result_detail.job.create_date|date:'Y-m-d' }}</p>
+                </div>
+
+            </div>
+            <div class="detailContent">
+                <div class="detailTitle">
+                    <strong>Job module</strong>
+                </div>
+                <div>
+                    <div class="detailSubTitle">
+                        <p>Module used :&nbsp</p>
+                        <p>{{ result_detail.job.module_api.module.module_name }}</p>
+                    </div>
+                    <div class="detailSubTitle">
+                        <p>Usage module API :&nbsp</p>
+                        <p>{{ result_detail.job.module_api.module_api_name }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="detailContent">
+                <div class="detailTitle">
+                    <strong>Smiles</strong>
+                </div>
+                <div style="margin-right: 20px;">
+                    <div class="detailSubTitle">
+                        <p style="min-width: 90px">Job smiles :&nbsp</p>
+                        <p>{{ result_detail.job.smiles }}</p>
+                    </div>
+                    <div class="detailSubTitle">
+                        <p>Molecular weight :&nbsp</p>
+                        <p>{{ smiles_detail.weight }}</p>
+                    </div>
+                    <div class="detailSubTitle">
+                        <p>LogP :&nbsp</p>
+                        <p>{{ smiles_detail.logp }}</p>
+                    </div>
+                    <div class="detailSubTitle">
+                        <p>H-Bond Acceptor :&nbsp</p>
+                        <p>{{ smiles_detail.numH }}</p>
+                    </div>
+                    <div class="detailSubTitle">
+                        <p>H-Bond Dornor :&nbsp</p>
+                        <p>{{ smiles_detail.numHD }}</p>
+                    </div>
+                    <div class="detailSubTitle">
+                        <p>Rotatable Bond :&nbsp</p>
+                        <p>{{ smiles_detail.numR }}</p>
+                    </div>
+                    <div class="detailSubTitle">
+                        <p>QED (drug likeness) :&nbsp</p>
+                        <p>{{ smiles_detail.qed |floatformat:3 }}</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="detailSubTitle">
+                        <p><img src="{% static img_path %}"/></p>
+                    </div>
+                </div>
+            </div>
+            <div class="detailContent">
+                <div class="detailTitle">
+                    <strong>Job data</strong>
+                </div>
+                <div>
+                    <div class="detailSubTitle">
+                        <p>Job explanation :&nbsp</p>
+                        <p>{{ result_detail.job.job_explanation }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="detailContent">
+                <div class="detailTitle">
+                    <strong>Job result</strong>
+                </div>
+                <div>
+                    {% if result_detail.job.module_api.module_api_cd == 'CD001' %}
+
+                        {% if result_detail.result_json.graph == 'nan' and result_detail.result_json.descriptor == 'nan' and result_detail.result_json.fingerprint == 'nan' %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                <p>hERG-nonblocker</p>
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan' and result_detail.result_json.descriptor == 'nan' and result_detail.result_json.fingerprint == 'nan'%}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.graph|slice:":4"  > '0.5' %}
+                                    <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph == 'nan' and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint == 'nan'%}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.descriptor|slice:":4"  > '0.5' %}
+                                    <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph == 'nan' and result_detail.result_json.descriptor == 'nan' and result_detail.result_json.fingerprint != 'nan'%}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.fingerprint|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan' and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint != 'nan' and result_detail.result_json.graph >= result_detail.result_json.descriptor and result_detail.result_json.graph >= result_detail.result_json.fingerprint %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.graph|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan' and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint != 'nan' and result_detail.result_json.descriptor >= result_detail.result_json.graph and result_detail.result_json.descriptor >= result_detail.result_json.fingerprint %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.descriptor|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan' and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint != 'nan'  and result_detail.result_json.fingerprint >= result_detail.result_json.graph and result_detail.result_json.fingerprint >= result_detail.result_json.descriptor %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.fingerprint|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan'  and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint == 'nan' and result_detail.result_json.graph >= result_detail.result_json.descriptor %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.graph|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan'  and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint == 'nan' and result_detail.result_json.descriptor >= result_detail.result_json.graph %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.descriptor|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph == 'nan'   and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint != 'nan' and result_detail.result_json.descriptor >= result_detail.result_json.fingerprint %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.descriptor|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph == 'nan'  and result_detail.result_json.descriptor != 'nan' and result_detail.result_json.fingerprint != 'nan' and result_detail.result_json.fingerprint >= result_detail.result_json.descriptor %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.fingerprint|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan'  and result_detail.result_json.descriptor == 'nan' and result_detail.result_json.fingerprint != 'nan' and result_detail.result_json.graph >= result_detail.result_json.fingerprint %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.graph|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if result_detail.result_json.graph != 'nan'  and result_detail.result_json.descriptor == 'nan' and result_detail.result_json.fingerprint != 'nan' and result_detail.result_json.fingerprint >= result_detail.result_json.graph %}
+                            <div class="detailSubTitle">
+                                <p>Result :&nbsp</p>
+                                {% if result_detail.result_json.fingerprint|slice:":4"  > '0.5' %}
+                                     <p>hERG-blocker</p>
+                                {% else %}
+                                    <p>hERG-nonblocker</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+{#                        <div class="detailSubTitle">#}
+{#                            <p>graph :&nbsp</p>#}
+{#                            <p>{{ result_detail.result_json.graph }}</p>#}
+{#                        </div>#}
+{#                        <div class="detailSubTitle">#}
+{#                            <p>descriptor :&nbsp</p>#}
+{#                            <p>{{ result_detail.result_json.descriptor }}</p>#}
+{#                        </div>#}
+{#                        <div class="detailSubTitle">#}
+{#                            <p>fingerprint :&nbsp</p>#}
+{#                            <p>{{ result_detail.result_json.fingerprint }}</p>#}
+{#                        </div>#}
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time | floatformat }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Version :&nbsp</p>
+                            <p>{{ result_detail.result_json.version }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if result_detail.job.module_api.module_api_cd == 'CD002' %}
+                        <div class="detailSubTitle">
+                            <p>BBBP :&nbsp</p>
+                            {% if result_detail.result_json.BBBP|slice:":3"  > '0.5' %}
+                                <p>Permeable</p>
+                            {% else %}
+                                <p>Non-permeable</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time | floatformat }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Version :&nbsp</p>
+                            <p>{{ result_detail.result_json.version }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if result_detail.job.module_api.module_api_cd == 'CD003' %}
+                        <div class="detailSubTitle">
+                            <p>CYP1A2 :&nbsp</p>
+                            {% if result_detail.result_json.CYP1A2|slice:":4" > '0.5' %}
+                                <p>inhibitor</p>
+                            {% else %}
+                                <p>non-inhibitor</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>CYP2C19 :&nbsp</p>
+                            {% if result_detail.result_json.CYP2C19|slice:":4" > '0.5' %}
+                                <p>inhibitor</p>
+                            {% else %}
+                                <p>non-inhibitor</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>CYP2C9 :&nbsp</p>
+                            {% if result_detail.result_json.CYP2C9|slice:":4" > '0.5' %}
+                                <p>inhibitor</p>
+                            {% else %}
+                                <p>non-inhibitor</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>CYP2D6 :&nbsp</p>
+                            {% if result_detail.result_json.CYP2D6|slice:":4" > '0.5' %}
+                                <p>inhibitor</p>
+                            {% else %}
+                                <p>non-inhibitor</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>CYP3A4 :&nbsp</p>
+                            {% if result_detail.result_json.CYP3A4|slice:":4" > '0.5' %}
+                                <p>inhibitor</p>
+                            {% else %}
+                                <p>non-inhibitor</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time | floatformat }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Version :&nbsp</p>
+                            <p>{{ result_detail.result_json.version }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if result_detail.job.module_api.module_api_cd == 'CD004' %}
+                        <div class="detailSubTitle">
+                            <p>Result :&nbsp</p>
+                            {% if result_detail.result_json.hERG_inhibition|slice:":4" > '0.5' %}
+                                <p>hERG-blocker</p>
+                            {% else %}
+                                <p>hERG-nonblocker</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time |floatformat }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Version :&nbsp</p>
+                            <p>{{ result_detail.result_json.version }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if result_detail.job.module_api.module_api_cd == 'CD005' %}
+                        <div class="detailSubTitle">
+                            <p>Human :&nbsp</p>
+                            <p>{{ result_detail.result_json.Human }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Mouse :&nbsp</p>
+                            <p>{{ result_detail.result_json.Mouse }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time | floatformat }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Version :&nbsp</p>
+                            <p>{{ result_detail.result_json.version }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if result_detail.job.module_api.module_api_cd == 'CD006' %}
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time | floatformat }}</p>
+                        </div>
+                        {#수정요망#}
+                        {% include 'job_user/include_chemtrans.html' %}
+
+                    {% endif %}
+
+                </div>
+            </div>
+            <div class="detailContent">
+                <div class="detailTitle">
+                    <strong>Report</strong>
+                </div>
+                <div>
+                    <div class="detailSubTitle">
+                        <a href="{% url 'job_user:job_result_report' pk=result_detail.pk %}">
+                            <img src="{% static 'img/pdf.png' %}"> {{ result_detail.job.job_name }}.pdf</a>
+                    </div>
+                    <div class="detailSubTitle">
+                        <a href="{% url 'job_user:job_result_report_csv' pk=result_detail.pk %}">
+                            <img src="{% static 'img/csv.png' %}"> {{ result_detail.job.job_name }}.csv</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{#{% block header %}#}
+{#    <div class="login"><a href="{% url 'job_user:main_page' %}">&nbsp;&nbsp;&nbsp;Home</a></div>#}
+{#    <div class="login"><a href="{% url 'accounts:logout' %}?next={{ request.get_full_path }}">&nbsp;&nbsp;&nbsp;Logout</a></div>#}
+{#{% endblock %}#}
+
+{% block main %}
+    <!-- jsme start!  -->
+    <script type="text/javascript" language="javascript" src="{% static 'jsme/jsme.nocache.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jsme.js' %}"></script>
+    <!-- jsme End!  -->
+
+    SMILES
+    <input id="smilesResult" type="text" class="form-control" placeholder="Smiles Correction value" onchange="drawMolecularStructureBySmileExpression(this);"><br/>
+
+    DRAW A MOLECULE<br/>
+    <table align="center">
+        <tr>
+            <td id="appletContainer"></td>
+        </tr>
+    </table>
+
+    <input type="text" id="des_score" name="des_score" hidden><br/>
+    <input type="text" id="fig_score" name="fig_score" hidden><br/>
+    <input type="text" id="graph_score" name="graph_score" hidden><br/>
+    <input type="text" id="time" name="time" hidden>
+
+    <br/><br/>
+
+    <input type="button" class="btn btn-primary" id="btn-submit" value="SUBMIT">
+
+    <script type="text/javascript">
+
+        $('#btn-submit').on('click', function () {
+            var smiles_val = $('#smilesResult').val();
+            var content = smiles_val;
+
+            var urls = "http://192.168.1.222:50051/predict?callback=jQuery112401314454427091445_1595487908163&content=" + content + "&_=1595487908164";
+
+            $.ajax({
+                url: '/smiles_result',
+                type: 'get',
+                data: {'urls': urls},
+                dataType: 'text',
+                success: function (data) {
+                    var datas = data.split(",");
+
+                    var des_score_res = datas[0];
+                    var fig_score_res = datas[1];
+                    var graph_socre_res = datas[2];
+                    var time_res = datas[3];
+
+                    var des_score = des_score_res.substring(des_score_res.indexOf(":") + 1);
+                    var fig_score = fig_score_res.substring(fig_score_res.indexOf(":") + 1);
+                    var graph_socre = graph_socre_res.substring(graph_socre_res.indexOf(":") + 1);
+                    var time = time_res.substring(time_res.indexOf(":") + 1);
+                    //파싱한 테이터들을 배열에 저장합니다.
+                    var result_calculate = [];
+
+                    result_calculate.push(des_score);
+                    result_calculate.push(fig_score);
+                    result_calculate.push(graph_socre);
+                    result_calculate.push(time);
+
+                    //nan 인것을 체크합니다.
+                    for (var i = 0; i < result_calculate.length; i++)
+                        if (result_calculate[i] === 'nan')
+                            result_calculate[i] = 0;
+
+                    $('#des_score').val(result_calculate[0]);
+                    $('#fig_score').val(result_calculate[1]);
+                    $('#graph_score').val(result_calculate[2]);
+                    $('#time').val(result_calculate[3]);
+
+                }
+            });
+        })
+    </script>
+{% endblock %}

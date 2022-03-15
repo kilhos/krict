@@ -1,0 +1,80 @@
+{% load static %}
+<header class="header">
+    <div class="row justify-content-between">
+        <div class="logo">
+            <a href="{% url 'job_user:main_page' %}">
+                <img src="{% static '/img/krict_main_logo.png' %}" alt="KRICT logo" style="margin-top: 5px;"/>
+            </a>
+        </div>
+        {% if not user.is_authenticated %}
+            <div class="header-btns">
+                <div>
+                    <a href="{% url 'accounts:login' %}" class="d-flex justify-content-center">
+                        <div>LOGIN</div>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'accounts:signup' %}" class="d-flex justify-content-center">
+                        <div>SIGN UP</div>
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="header-btns">
+                <div>
+                    <a href="{% url 'accounts:logout' %}" class="d-flex justify-content-center">
+                        <div>LOGOUT</div>
+                    </a>
+                </div>
+                <div class="dropdownWrap">
+                    <div class="dropdown">
+                        <a href="javascript:;" class="d-flex justify-content-center h-100px">
+                            <div>WORK</div>
+                        </a>
+                        <div class="dropdown-content">
+                            <a href="{% url 'job_user:job_list' %}">My job</a>
+                            <a href="{% url 'job_user:module_list' %}">Module</a>
+                            <a href="{% url 'accounts:profile' %}">Profile</a>
+                            {% if user.role == 'sup' %}
+                                <a href="{% url 'job_manager:member_manager' %}">Manage</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</header>
+<script>
+    let didScroll;
+    var lastScrollTop = 0;
+    var delta = 5;
+    var navbarHeight = $('header').outerHeight();
+    $(window).scroll(function (event) {
+        didScroll = true;
+    });
+    setInterval(function () {
+        if (didScroll) {
+            hasScrolled();
+            didScroll = false;
+        }
+    }, 250);
+
+    function hasScrolled() {
+        var st = $(this).scrollTop(); // Make sure they scroll more than delta
+        if (Math.abs(lastScrollTop - st) <= delta) return;
+        // If they scrolled down and are past the navbar, add class .nav-up.
+        // This is necessary so you never see what is "behind" the navbar.
+        if (st > lastScrollTop && st > navbarHeight) {
+            // Scroll Down
+            $('header').removeClass('nav-down').addClass('nav-up');
+        } else {
+            // Scroll Up
+            if (st + $(window).height() < $(document).height()) {
+                $('header').removeClass('nav-up').addClass('nav-down');
+            }
+        }
+        lastScrollTop = st;
+    }
+
+</script>

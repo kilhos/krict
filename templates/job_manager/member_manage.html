@@ -1,0 +1,107 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+{% block script %}
+{% endblock %}
+{% block menu_content %}
+    <div class="w-100 h-100">
+        <div class="row w-100 ml-0 mr-0" style="margin: 90px 0px; padding: 0px 50px;">
+            <h1>Member List</h1>
+        </div>
+        <form class="search"> {% csrf_token %}
+            <select name="searchMemberSelect" id="search_select">
+                {% if not request.GET.searchMemberSelect or request.GET.searchMemberSelect == 'user_id' %}
+                    <option value="user_id" selected="select">User ID</option>
+                    <option value="name">Name</option>
+                {% else %}
+                    <option value="user_id">User ID</option>
+                    <option value="name" selected="select">Name</option>
+                {% endif %}
+            </select>
+            <div class="test">
+                <input type="search" class="SearchContent" name="searchMemberInput" placeholder="Search Input" value="{% if request.GET.searchMemberInput %}{{ request.GET.searchMemberInput }}{% endif %}">
+            </div>
+            <span><input type="submit" value="search"></span>
+        </form>
+        <div class="listWrap">
+            <table class="jobTable">
+                <thead>
+                <tr>
+                    <th style="width:5%">#</th>
+                    <th style="width:10%">User ID</th>
+                    <th style="width:10%">Name</th>
+                    <th style="width:30%">Institution</th>
+                    <th style="width:20%">E-mail</th>
+                    <th style="width:10%">Status</th>
+                    <th style="width:10%">Role</th>
+                    <th style="width:5%">Auth</th> 
+                    {% comment %}<th style="width:5%">Admin</th>{% endcomment %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr onclick="location.href='{{ user.get_absolute_url }}'">
+                        <th>{{ forloop.counter0 | add:page_obj.start_index }}</th>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.institution }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.get_state_display }}</td>
+                        <td>{{ user.get_role_display }}</td>
+                        <td>{{ user.get_level_display }}</td>
+                        {% comment %}<td><a href="{{ user.get_absolute_url }}"><i class="xi-spinner-5 xi-spin"></i></a></td>{% endcomment %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if is_paginated %}
+                <div class="page-wrapper">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item prev">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}"
+                                   tabindex="-1"><img
+                                        src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev"></a>
+                            </li>
+                        {% else %}
+                            <li class="page-item prev visibility_hidden">
+                                <a class="page-link" href="#" tabindex="-1"></a>
+                            </li>
+                        {% endif %}
+
+                        {% for page in page_range %}
+                            {% if page == page_obj.number %}
+                                <li class="page-item {% if page == page_obj.number %} active {% endif %}">
+                                    <a class="page-link" style="color:var(--color-white)"
+                                       href="?page={{ page }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?page={{ page }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item next">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}">
+                                    <img src="{% static 'img/arrow-next.png' %}" alt="arrow-prev">
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item next visibility_hidden">
+                                <a class="page-link" href="#"></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

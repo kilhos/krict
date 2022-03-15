@@ -1,0 +1,11 @@
+*.pyc
+*~
+__pycache__
+venv
+db.sqlite3
+/static
+.DS_Store
+.ipynb_checkpoints
+*.ipynb
+secrets.json
+

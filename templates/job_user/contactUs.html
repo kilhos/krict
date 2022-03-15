@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="contentWrap">
+    <div class="footerMenuWrap">
+        <div class="contactUs">
+            <h1>Contact us</h1>
+            <div>
+                <div class="content">
+                    <div>
+                        <img src="{% static 'img/krict_logo_kr.png' %}" style="width:auto; height:100px;" alt="krict logo">
+                    </div>
+                    <div>
+                        <strong>tel</strong>
+                        <div>
+                            <p>042 - 860 - 7543</p>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>fax</strong>
+                        <div>
+                            <p>042 - 861 - 4246</p>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>주소</strong>
+                        <div>
+                            <p>34114 대전광역시 유성구 가정로 141</p>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>website</strong>
+                        <div>
+                            <p><a href="https://www.krict.re.kr/">www.krict.re.kr</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--<div class="content">
+                        <div>
+                            <img src="{% static 'img/euclidsoft.jpg' %}" style="width:auto; height:100px;" alt="euclidsoft logo">
+                        </div>
+                        <div>
+                            <strong>tel</strong>
+                            <div>
+                                <p>042 - 488 - 6589</p>
+                            </div>
+                        </div>
+                        <div>
+                            <strong>fax</strong>
+                            <div>
+                                <p>042 - 367 - 0126</p>
+                            </div>
+                        </div>
+                    </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    new WOW().init();
+</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block menu_content %}
+    <div class="contentWrap">
+        <!--left menu-->
+        <div class="viewWrap">
+            <!-- register -->
+            <form method="POST" id="apiForm">{% csrf_token %}
+                <div class="titleWrap">
+                    <h1>API Information</h1>
+                    <div>
+                        <input class="button register-btn-color" type="button" id="btnSave" value="Save"/>
+                        <input class="button-nonColor register-btn-color" onclick="location.href='{% url "job_manager:module_api_modify" pk=target_api.pk %}'" type="button" value="Cancel"/>
+                    </div>
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Module</strong></label>
+                    <select name="module">
+                        {% for module in modules %}
+                            <option value="{{ module.pk }}" {% if module.pk == target_api.module.pk %}selected{% endif %}>
+                                {{ module.module_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="content">
+                    <label for="title"><strong>API Name</strong></label>
+                    <input type="text" name="api_name" class="input" value="{{ target_api.module_api_name }}"/>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        $('#btnSave').on({
+            click : function(){
+                if(confirm('Do you want to save your changes?')){
+                    $('#apiForm').submit();
+                }
+            }
+        })
+    </script>
+{% endblock %}

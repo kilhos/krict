@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="contentWrap">
+        <div class="footerMenuWrap">
+            <div class="sitemap">
+                <h1>Site map</h1>
+                <div>
+                    <div class="content">
+                        <strong>Main</strong>
+                        <div>
+                            <p><a href="{% url 'job_user:main_page' %}">main page</a></p>
+                            <p><a href="{% url 'job_user:contactUs' %}">contact us</a></p>
+                            <p><a href="{% url 'job_user:privacyPolicy' %}">privacy policy</a></p>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <strong>Module</strong>
+                        <div>
+                            <p><a href="{% url 'job_user:module_list' %}">module list</a></p>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <strong>User</strong>
+                        <div>
+                            <p><a href="{% url 'job_user:job_list' %}">job list</a></p>
+                            <p><a href="{% url 'job_user:job_result_page_list' %}">job result</a></p>
+                            <p><a href="{% url 'accounts:profile' %}">my profile</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        new WOW().init();
+    </script>
+{% endblock %}

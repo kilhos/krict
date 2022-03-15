@@ -1,0 +1,90 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block menu_content %}
+    <div class="contentWrap">
+        <!--left menu-->
+        <div class="viewWrap">
+            <!-- register -->
+            <form method="POST">{% csrf_token %}
+                <div class="titleWrap">
+                    <h1>Individual Information</h1>
+                    <div>
+                        <input class="button register-btn-color" id="btnModify" type="button" value="Modify"/>
+                        <input class="button-nonColor register-btn-color" onclick="location.href='{% url "job_manager:member_manager" %}'" type="button" value="List"/>
+                    </div>
+                </div>
+                <div class="titleWrap-table">
+                    <div class="content">
+                        <label for="title"><strong>ID</strong></label>
+                        <input type="text" value="{{ target_user.username }}" disabled="true"/>
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>Name</strong></label>
+                        <input type="text" value="{{ target_user.name }}" disabled="true"/> 
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>E-mail</strong></label>
+                        <input type="text" value="{{ target_user.email }}" disabled="true"/> 
+                    </div>
+    {#                <div class="content">#}
+    {#                    <label for="title"><strong>password</strong></label>#}
+    {#                    {{ form.password.errors }}#}
+    {#                    {{ form.password }}#}
+    {#                </div>#}
+                    <div class="content">
+                        <label for="title"><strong>Institution</strong></label>
+                        <input type="text" value="{{ target_user.institution }}" disabled="true"/> 
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>Phone_number</strong></label>
+                        <input type="text" value="{{ target_user.mobile_phone }}" disabled="true"/> 
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>Department</strong></label>
+                        <input type="text" value="{{ target_user.department }}" disabled="true"/> 
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>Employee number</strong></label>
+                        <input type="text" value="{{ target_user.employee_no }}" disabled="true"/> 
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>Company tel number</strong></label>
+                        <input type="text" value="{{ target_user.company_phone }}" disabled="true"/> 
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>State</strong></label>
+                        <input type="text" value="{{ target_user.get_state_display }}" disabled="true"/> 
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>Role</strong></label>
+                        <input type="text" value="{{ target_user.get_role_display }}" disabled="true"/>
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>Level</strong></label>
+                        <input type="text" value="{{ target_user.get_level_display }}" disabled="true"/>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('input[name=password]').val('');
+        });
+
+        $('#btnModify').on({
+            click : function(){
+                location.href = '{% url "job_manager:member_modify_save" pk=target_user.pk %}';
+            }
+        })
+
+    </script>
+{% endblock %}

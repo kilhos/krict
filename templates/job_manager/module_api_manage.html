@@ -1,0 +1,82 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+{% block script %}
+{% endblock %}
+{% block menu_content %}
+    <div class="w-100 h-100">
+        <div class="row w-100 ml-0 mr-0" style="margin: 90px 0px; padding: 0px 50px;">
+            <h1>API List</h1>
+        </div>
+        <div class="listWrap">
+            <table class="jobTable">
+                <thead>
+                <tr>
+                    <th style="width:5%">#</th>
+                    <th style="width:40%">Module name</th>
+                    <th style="width:45%">API name</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for api in api_list %}
+                    <tr onclick="location.href='{{ api.get_absolute_url }}'">
+                        <th>{{ forloop.counter0 | add:page_obj.start_index }}</th>
+                        <td>{{ api.module.module_name }}</td>
+                        <td>{{ api.module_api_name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if is_paginated %}
+                <div class="page-wrapper">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item prev">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}"
+                                   tabindex="-1">
+                                    <img src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev">
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item prev visibility_hidden">
+                                <a class="page-link" href="#" tabindex="-1"></a>
+                            </li>
+                        {% endif %}
+
+                        {% for page in page_range %}
+                            {% if page == page_obj.number %}
+                                <li class="page-item {% if page == page_obj.number %} active {% endif %}">
+                                    <a class="page-link"
+                                       style="color:var(--color-white)"
+                                       href="?page={{ page }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?page={{ page }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item next">
+                                <a class="page-link"
+                                   href="?page={{ page_obj.next_page_number }}&searchMemberSelect={{ request.GET.searchMemberSelect }}&searchMemberInput={{ request.GET.searchMemberInput }}"><img
+                                        src="{% static 'img/arrow-next.png' %}" alt="arrow-prev"></a>
+                            </li>
+                        {% else %}
+                            <li class="page-item next visibility_hidden">
+                                <a class="page-link" href="#"></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

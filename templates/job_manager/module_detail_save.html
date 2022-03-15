@@ -1,0 +1,140 @@
+{% extends 'admin_layout.html' %}
+
+{% load static %}
+
+{% block style %}
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block menu_content %}
+    <div class="contentWrap">
+        <div class="viewWrap">
+            <form method="post" action="{% url 'job_manager:do_module_modify' %}" enctype="multipart/form-data"
+                  id="modifyModule">
+                {% csrf_token %}
+                <div class="titleWrap">
+                    <h1>Module Modify</h1>
+                    <div>
+                        <input type="button" value="Save" id="modifyBtn" class="button register-btn-color">
+                          <input class="button-nonColor register-btn-color" onclick="location.href='{% url "job_manager:module_detail" pk=pk %}'" type="button" value="Cancel"/>
+                    </div>
+                </div>
+                <div class="content">
+                    <label for="module_name"><strong>Name</strong></label>
+                    <input id="module_name" name="module_name" type="text" autocomplete="false"
+                           value="{{ module.module_name }}">
+                </div>
+                <div class="content">
+                    <label for="module_explanation"><strong>Explanation</strong> </label>
+                    <textarea name="module_explanation" id="module_explanation" placeholder="module explanation"
+                              rows="10" cols="40" style="width:80%"
+                              autocomplete="false">{{ module.module_explanation }}</textarea>
+                </div>
+                <div class="content">
+                    <label for="level">Level</label>
+                    <select id="level" name="module_level">
+                        {% for key in level %}
+                            {% if module.module_level == key.0 %}
+                                <option value="{{ key.0 }}" selected>{{ key.1 }}</option>
+                            {% endif %}
+                            {% if module.module_level != key.0 %}
+                                <option value="{{ key.0 }}">{{ key.1 }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="content">
+                    <label for="thumbnail">Thumbnail</label>
+                    <img src="{{ module.module_img.url }}" style="width: 100px; height: 100px;" alt="">
+                </div>
+                <div class="content">
+                    <label for="current_img">Modify image </label>
+                    <input type="file" id="module_img" name="module_img" autocomplete="false" onchange="fileChange()">
+                </div>
+
+                <div class="content">
+                    <label for="paper_link">Paper Link</label>
+                    <input type="text" name="paper_link" id="paper_link" autocomplete="false"
+                           value="{{ module.paper_link }}"/>
+                </div>
+<!--                 <div class="content">
+                    <label for="category">Category</label>
+                    <select id="category" name="module_category">
+                        {% for val in category %}
+                            {% if module.module_category == val.0 %}
+                                <option value="{{ val.0 }}" selected>{{ val.1 }}</option>
+                            {% endif %}
+                            {% if module.module_category != val.0 %}
+                                <option value="{{ val.0 }}">{{ val.1 }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="content">
+                    <label for="type">Type</label>
+                    <select id="type" name="module_type">
+                        {% for val in type %}
+                            {% if module.module_type == val.0 %}
+                                <option value="{{ val.0 }}" selected>{{ val.1 }}</option>
+                            {% endif %}
+                            {% if module.module_type != val.0 %}
+                                <option value="{{ val.0 }}">{{ val.1 }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div> -->
+
+                <input type="hidden" name="id" value="{{ module.id }}">
+                <input type="hidden" id="originImageFileName" name="originImageFileName"
+                       value="{{ module.module_img }}">
+                <input type="hidden" name="originAPIFileName" value="{{api.module_api_name }}">
+
+
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var currentFileName = '';
+        var currentAPIFileName='';
+        function fileChange() {
+            currentFileName = $('#module_img').val();
+        }
+        function apiFileChange(){
+            currentAPIFileName=$('#module_api_name').val();
+        }
+
+        function categoryChange(param) {
+            var category = param.value.split(',')[0].replace('(', '');
+            $('#module_category').val(category.replace(category.charAt(0), '').replace(category.charAt(category.length - 1), ''));
+        }
+
+
+        function typeChange(param) {
+            var type = param.value.split(',')[0].replace('(', '');
+            $('#module_type').val(type.replace(type.charAt(0), '').replace(type.charAt(type.length - 1), ''));
+        }
+
+
+        function levelChange(param) {
+            var level = param.value.split(',')[0].replace('(', '');
+            $('#module_level').val(level.replace(level.charAt(0), '').replace(level.charAt(level.length - 1), ''));
+        }
+
+
+        $(document).ready(function () {
+            var level = '{{ module.module_level }}';
+            var category = '{{ module.module_category }}';
+
+
+        });
+        $('#modifyBtn').on('click', function () {
+            if(confirm('Do you want to save your changes?')){
+                $('#modifyModule').submit();
+            }
+
+        })
+    </script>
+{% endblock %}

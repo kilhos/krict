@@ -1,0 +1,44 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block menu_content %}
+    <div class="contentWrap">
+        <!--left menu-->
+        <div class="viewWrap">
+            <!-- register -->
+            <form method="POST">{% csrf_token %}
+                <div class="titleWrap">
+                    <h1>API Information Modify</h1>
+                    <div>
+                        <input class="button register-btn-color" type="button" id="btnModify" value="Modify"/>
+                        <input class="button-nonColor register-btn-color" onclick="location.href='{% url "job_manager:module_api_manage" %}'" type="button" value="List"/>
+                    </div>
+                </div>
+                <div class="titleWrap-table">
+                    <div class="content">
+                        <label for="title"><strong>Module</strong></label>
+                        <input type="text" value="{% for module in modules %}{% if module.pk == target_api.module.pk %}{{ module.module_name }}{% endif %}{% endfor %}" disabled="true"/>
+                    </div>
+                    <div class="content">
+                        <label for="title"><strong>API Name</strong></label>
+                        <input type="text"  value="{{ target_api.module_api_name }}" disabled="true"/>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        $('#btnModify').on({
+            click : function(){
+                location.href = '{% url "job_manager:module_api_modify_save" pk=target_api.pk %}';
+            }
+        })
+        
+    </script>
+{% endblock %}

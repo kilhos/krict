@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block main %}
+    <div class="formWrap">
+        <p class="login"><b>Sign up</b></p>
+        <form method="post" class="signupform">{% csrf_token %}
+            <p><span>ID*</span><span style="font-size: 10pt">&nbsp&nbsp(Please enter at least 4 letters in English or numbers)</span></p>
+            <div class="idWrap1">
+	      {{ form.username.errors }}
+	      <div class="idWrap">
+	      {{ form.username }}
+		<button class="check-btn-color" type="button" id="idCheck">ID check</button>
+		</div>
+            </div>
+
+            <p>Name*</p> {{ form.name }}
+            {{ form.name.errors }}
+            <p>E-mail*</p>{{ form.email.errors }} {{ form.email }}
+            <p><span>Password*</span><span style="font-size: 10pt;">&nbsp&nbsp(Please enter at least 6 letters in English or numbers)</span></p>{{ form.password1.errors }} {{ form.password1 }}
+            
+            <p>Repeat Password*</p>{{ form.password2.errors }}{{ form.password2 }}
+
+            <p>Institution</p> {{ form.institution }}
+            <p>Phone number</p> {{ form.mobile_phone }}
+            <p>Department</p> {{ form.department }}
+            <p>Employee identification number</p> {{ form.employee_no }}
+            <p>Company tel number</p> {{ form.company_phone }}
+            <input type="submit" class="submit-btn-color" value="Submit">
+        </form>
+
+        <div class="goback">
+            <p><a href="{% url 'accounts:login' %}">Go back</a></p>
+        </div>
+    </div>
+    <script>
+/*         $(document).ready(function () {
+            $('#id_institution').attr('required', false);
+            $('#id_mobile_phone').attr('required', false);
+            $('#id_department').attr('required', false);
+            $('#id_employee_no').attr('required', false);
+            $('#id_company_phone').attr('required', false);
+        }); */
+
+        let id_validation = 0;
+        $('#idCheck').on({
+            click: function () {
+                if ($('#id_username').val().trim().length >= 4) {
+                    $.ajax({
+                        url: '{% url "accounts:id_check" %}',
+                        method: 'POST',
+                        data: {'user_id': $('input[name=username]').val()},
+                        success: function (data) {
+                            if (data) {
+                                id_validation = 1;
+                                alert('ID is already in use.');
+                            } else {
+                                id_validation = 2;
+                                alert('The entered ID is available.');
+                            }
+                        },
+                        error: function () {
+                            console.log("fail")
+                        }
+                    });
+                } else {
+                    alert("Please enter at least 4 characters.");
+                    return false;
+                }
+            }
+        });
+    </script>
+{% endblock %}

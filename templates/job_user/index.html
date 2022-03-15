@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" style="background:url({% static '/img/slide1.jpg' %}) 50% /cover no-repeat">
+                <div class="slideText">
+                    <h2>KRICT Artificial Intelligence for<br>
+                        Drug Discovery and Development
+                    </h2>
+                    <p>Our platform provides AI models from hit discovery to lead optimization<br>to accelerate drug discovery and development</p>
+                    <!-- <a href="javascript:;">view more</a> -->
+                </div>
+            </div>
+            <div class="swiper-slide" style="background:url({% static '/img/slide2.jpg' %}) 50% /cover no-repeat">
+                <div class="slideText">
+                    <h2>KRICT Artificial Intelligence for<br>
+                        Drug Discovery and Development
+                    </h2>
+                    <p>Our platform provides AI models from hit discovery to lead optimization<br>to accelerate drug discovery and development</p>
+                    <!-- <a href="javascript:;">view more</a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <section>
+        <ul class="mainModule">
+            {% for module in modules %}
+                <li class="wow fadeInUp animated d-flex align-items-center flex-column" data-wow-delay="0.2s" name="moduleLi"
+                    style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+                    <span class="image">
+                        <img src="{{ module.module_img.url }}" alt=""/>
+                    </span>
+                    <div class=levelTag>
+                        <strong>{{ module.module_name }}</strong>
+                        {% comment %}
+								{% if module.module_level == '1' %}
+                                    <img src="{% static '/img/level1-lanscape.png' %}"alt="level1"/>
+                                {% elif module.module_level == '2' %}
+                                    <img src="{% static '/img/level2-lanscape.png' %}"alt="level2"/>
+                                {% else %}
+                                    <img src="{% static '/img/level3-lanscape.png' %}"alt="level3"/>
+                                {% endif %}{% endcomment %}
+                    </div>
+                    <span class="substance">
+                        {{ module.module_explanation }}
+                    </span>
+                    <div class="mt-auto">
+                        <a href="javascript:;"
+                                {% if user.level >= module.module_level %}
+                           onclick="href='{{ module.get_user_login_absolute_url }}'"
+                                {% elif user.level < module.module_level %}
+                           onclick="fn_module_no_permission()"
+                                {% elif user.is_authenticated %}
+                           onclick="fn_not_authenticated()"
+                                {% else %}
+                           onclick="fn_not_authenticated()"
+                                {% endif %}
+                        >
+                            view more
+                        </a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+    <script>
+        $(function () {
+            new Swiper('.swiper-container', {
+                autoplay: {
+                    delay: 2500
+                },
+                effect: 'fade',
+            });
+        });
+        new WOW().init();
+
+        function fn_module_no_permission() {
+            alert('You do not have access to the module');
+            return false;
+        }
+
+        function fn_not_authenticated() {
+            alert('Login is required');
+            return false;
+        }
+    </script>
+{% endblock %}

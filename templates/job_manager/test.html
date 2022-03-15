@@ -1,0 +1,34 @@
+{% extends 'admin_layout.html' %}
+
+{% load static %}
+
+{% block style %}
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block menu_content %}
+    <form method="post">{% csrf_token %}
+        <input type="hidden" name="user" value="{{ user.pk }}">
+        smiles <input type="text" name="smiles" value=""/>
+        <input type="submit" value="submit"/>
+    </form>
+    <div class="detailContent">
+        <div class="detailTitle">
+            <strong>result json</strong>
+        </div>
+        <div id="aaa">
+            {{ json }}
+            {% for key in json %}
+                <div class="detailSubTitle">
+                    <p>{{ key }}</p>
+                    <p>{{ key }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}

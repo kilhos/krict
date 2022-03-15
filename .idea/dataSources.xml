@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="db.sqlite3" uuid="561ed794-98a7-46db-8934-f58d78c5c527">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\python_project\euclid_krict\db.sqlite3</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="@192.168.1.22" uuid="6b8d393c-33e5-4338-835d-f6814f704d1a">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://192.168.1.22:3306</jdbc-url>
+    </data-source>
+  </component>
+</project>

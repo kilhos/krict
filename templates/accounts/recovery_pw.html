@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+    <div class="formWrap">
+        <p class="login"><b>Password search</b></p>
+        <form style="margin-top: 15px;" action="">
+            <p style="margin-bottom: 5px;">ID</p> {{ form.username }}
+            <p style="margin-bottom: 5px;">Name</p>{{ form.name }}
+            <p style="margin-bottom: 5px;">E-mail</p>{{ form.email }}
+            <div id="verify_div" class="accountfind">
+                <button type="button" class="submit-btn-color" id="find_pw" style="border-radius:5px;">Password Change</button>
+            </div>
+        </form>
+        <div class="goback">
+            <p><a href="{% url 'accounts:login' %}">Go back</a></p>
+        </div>
+    </div>
+    <script>
+        function fn_confirm_auth(user_pk) {
+            var auth_num = $("#auth_num").val();
+            $.ajax({
+                type: "POST",
+                url: "{% url 'accounts:comfirm_auth' %}",
+                dataType: "json",
+                data: {
+                    'user_pk': user_pk,
+                    'auth_num': auth_num
+                },
+                success: function (data) {
+                    if (data.target_user != 'false') {
+                        //$('#target_user').val(data.target_user);
+                        //$('#pw_change_redirect_form').submit();
+                        location.href = "{% url 'accounts:password_change' %}?pk=" + data.target_user;
+                    } else {
+                        alert('인증번호 불일치');
+                    }
+                },
+                error: function () {
+                    alert('error');
+                },
+            });
+        }
+
+        $('#find_pw').on({
+            click: function () {
+                var username = $("#id_username").val();
+                var name = $("#id_name").val();
+                var email = $("#id_email").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'accounts:send_mail' %}",
+                    dataType: "json",
+                    data: {
+                        'username': username,
+                        'name': name,
+                        'email': email
+                    },
+                    success: function (data) {
+                        if(data.save_target_user != 'false'){
+                            location.href = "{% url 'accounts:password_change' %}?pk=" + data.save_target_user;
+                            /* $('#verify_div').html('<div class="idWrap" style="width:482px; margin-top:20px; "><input type="text" id="auth_num" placeholder="input code from email"/>\n' +
+                                '<button class="check-btn-color" type="button" id="confirm" onclick="fn_confirm_auth(\'' + data.save_target_user + '\')" style="height: 54px;">Confirm</button></div>') */
+                        }else{
+                            alert('The name is not registered with the account.');
+                        }
+                    },
+                    error: function () {
+                        alert('The name is not registered with the account.');
+                    },
+                });
+            }
+        });
+    </script>
+{% endblock %}

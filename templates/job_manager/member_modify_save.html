@@ -1,0 +1,92 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block menu_content %}
+    <div class="contentWrap">
+        <!--left menu-->
+        <div class="viewWrap">
+            <!-- register -->
+            <form method="POST" id="saveForm">{% csrf_token %}
+                <div class="titleWrap">
+                    <h1>Individual Information</h1>
+                    <div>
+                        <input class="button register-btn-color" type="button" id="btnSave" value="Save"/>
+                        <input class="button-nonColor register-btn-color" onclick="location.href='{% url "job_manager:member_modify" pk=user_pk %}'" type="button" value="Cancel"/>
+                    </div>
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Id</strong></label>
+                    {{ form.username }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Name</strong></label>
+                    {{ form.name.error }}
+                    {{ form.name }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>E-mail</strong></label>
+                    {{ form.email.errors }}
+                    {{ form.email }}
+                </div>
+{#                <div class="content">#}
+{#                    <label for="title"><strong>password</strong></label>#}
+{#                    {{ form.password.errors }}#}
+{#                    {{ form.password }}#}
+{#                </div>#}
+                <div class="content">
+                    <label for="title"><strong>Institution</strong></label>
+                    {{ form.institution }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Phone_number</strong></label>
+                    {{ form.mobile_phone }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Department</strong></label>
+                    {{ form.department }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Employee number</strong></label>
+                    {{ form.employee_no }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Company tel number</strong></label>
+                    {{ form.company_phone }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>State</strong></label>
+                    {{ form.state }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Role</strong></label>
+                    {{ form.role }}
+                </div>
+                <div class="content">
+                    <label for="title"><strong>Level</strong></label>
+                    {{ form.level }}
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('input[name=password]').val('');
+        });
+
+        $("#btnSave").on({
+            click : function(){
+                if(confirm('Do you want to save your changes?')){
+                    $('#saveForm').submit();
+                }
+            }
+        })
+
+    </script>
+{% endblock %}

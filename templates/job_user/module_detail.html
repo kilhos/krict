@@ -1,0 +1,77 @@
+{% extends 'aside_menu.html' %}
+{% load static %}
+
+{% block script %}
+{% endblock %}
+
+{% block menu_content %}
+    <div class="contentWrap">
+        <div class="viewWrap">
+            <form method="post" action="{% url 'job_user:job_register_page' %}">{% csrf_token %}
+                <div class="titleWrap">
+                    <h1>Module Detail</h1>
+
+                    <button class="button register-btn-color" type="submit">Analysis</button>
+
+
+                </div>
+                <div class="titleWrap-table">
+                    <div class="content">
+                        <label for="module_name"><strong>Title</strong></label>
+                        <input type="text" id="module_name" value="{{ module.module_name }}" disabled>
+                    </div>
+                    <div class="content">
+                        <label for="module_explanation"><strong>Content</strong></label>
+                        <textarea rows="10" cols="10" id="module_explanation"
+                            disabled>{{ module.module_explanation }}</textarea> 
+<!--                        <input type="text" id="module_explanation" value="{{ module.module_explanation }}" disabled>			-->
+
+                    </div>
+                    <div class="content">
+                        <label for="paper_link"><strong>Paper link</strong></label>
+                        <input type="text" id="paper_link" disabled value="{{ module.paper_link }}">
+                    </div>
+                    <div class="content">
+                        <label for="paper_link"><strong>Module name</strong></label>
+                        <input type="text" id="paper_link" disabled value="{{ module.module_name }}">
+                    </div>
+                    <div class="content">
+                        <label for="thumbnail"><strong>Thumbnail</strong></label>
+                        {% if module.module_img %}
+                        <div class="img-box">
+                            <img id="thumbnail" src="{{ module.module_img.url }}" style="width: 100px; height: 100px;"/>
+                        </div>
+                        {% else %}
+                            No Img<br/>
+                        {% endif %}
+                    </div>
+                    <div class="content">
+                        <label for="module_api"><strong>Module api</strong></label>
+                            {% for api in module_api %}
+                                {% if pk == api.module_id %}
+                                    <input type="text"  id="module_api" value="{{ api.module_api_name }}" disabled/>
+                                    <input id="module_api" type="hidden" name="module_api" VALUE="{{ api.id }}">
+                                    <input id="module_api_name" type="hidden" name="module_api_name" VALUE="{{ api.module_api_name }}">
+                                {% endif %}
+                            {% endfor %}
+                    </div>
+                    <input type="hidden" name="module_api_pk" value="{{ module.pk }}">
+                    <input id="module_name" type="hidden" name="module_name" value="{{ module.module_name }}">
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+/*         $('#module_api option:eq(0)').attr("selected", "selected");
+        $('#module_api_name').val($('#module_api option:eq(0)').text());
+
+        function change() {
+
+            $('#module_api_name').val($('#module_api option:selected').text());
+        } */
+
+
+    </script>
+{% endblock %}">

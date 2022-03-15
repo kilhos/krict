@@ -1,0 +1,133 @@
+{% extends 'admin_layout.html' %}
+
+{% load static %}7
+
+{% block style %}
+{% endblock %}
+
+{% block script %}
+{% endblock %}
+
+{% block menu_content %}
+    <div class="contentWrap">
+        <div class="viewWrap">
+            <form class="" method="post" action="{% url 'job_manager:module_register' %}" enctype="multipart/form-data"
+                  id="registerModule">
+                {% csrf_token %}
+                <div class="titleWrap">
+                    <h1>Module Register</h1>
+                    <div>
+                        <input type="button" value="Save" id="registerBtn" class="button register-btn-color">
+                        <input class="button-nonColor register-btn-color" type="button" value="Cancel"
+                           onclick="location.href='{% url 'job_manager:module_manager' %}'"/>
+                    </div>
+                </div>
+                <div class="content">
+                    <label for="module_name">Name</label>
+                    <input id="module_name" i name="module_name" type="text"
+                           autocomplete="false">
+                </div>
+                <div class="content">
+                    <label for="module_explanation">Explanation</label>
+                    <textarea name="module_explanation" i id="module_explanation" placeholder="module explanation"
+                              cols="30" rows="10"
+                              autocomplete="false"></textarea>
+                </div>
+                <div class="content">
+                    <label for="level">Level</label>
+                    <select id="level" i>
+                        {% for key in level %}
+                            <option value="{{ key.0 }}">{{ key.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="content">
+                    <label for="module_img">Thumbnail</label>
+                    <input type="file" i id="module_img" name="module_img" autocomplete="false"
+                           onchange="moduleImgChange(module_img.value);">
+                </div>
+
+                <div class="content">
+                    <label for="paper_link">Paper Link</label>
+                    <input type="text" i name="paper_link" id="paper_link" autocomplete="false"/>
+                </div>
+                <div class="content">
+                    <label for="category">Category</label>
+                    <select id="category" i>
+                        {% for val in category %}
+                            <option value="{{ val.0 }}">{{ val.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="content">
+                    <label for="type">Type</label>
+                    <select id="type">
+                        {% for val in type %}
+                            <option value="{{ val.0 }}">{{ val.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <input type="hidden" id="module_level" name="module_level" value="">
+                <input type="hidden" id="module_category" name="module_category" value="">
+                <input type="hidden" id="module_type" name="module_type" value="">
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function moduleImgChange(imageFileName) {
+            var fileExtensionReg = /(.*?)\.(jpg|jpeg|png|gif|bmp)$/;
+            if(imageFileName==null||imageFileName===''){
+                alert("thumbnail file choose please");
+                return false;
+            }
+
+            if (!imageFileName.match(fileExtensionReg)) {
+                alert('thumbnail file type is picture extension(ex jpg,png,gif,bmp)');
+                return false;
+            }
+            return true;
+
+        }
+
+
+        $('#registerBtn').on('click', function () {
+            if ($('#module_name').val() === '' || $('#module_name').val() === null) {
+                $('#module_name').focus();
+                return;
+            }
+
+            if (moduleImgChange($('#module_img').val()) === false)
+                return
+
+
+            if ($('#paper_link').val() === '' || $('#paper_link').val() === null) {
+                $('#paper_link').focus();
+                return;
+            }
+
+
+            var level = $('#level option:selected').val();
+            var category = $('#category option:selected').val();
+            var type = $('#type option:selected').val();
+            if (level === null || level === '') {
+                alert("level 값을 선택해주세요");
+                return;
+            }
+            if (category === null || level === '') {
+                alert("category 값을 선택해주세요");
+                return;
+            }
+            if (type === null || level === '') {
+                alert("type 값을 선택해주세요");
+                return;
+            }
+            $('#module_level').val(level);
+            $('#module_category').val(category);
+            $('#module_type').val(type);
+            $('#registerModule').submit();
+
+
+        })
+    </script>
+{% endblock %}

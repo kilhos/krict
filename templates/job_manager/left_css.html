@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+    <table class="table" id="table">
+      <thead class="thead-dark">
+        <tr>
+          <th>#</th>
+          <th>USER_ID</th>
+          <th>NAME</th>
+          <th>INSTITUTION</th>
+          <th>EMAIL</th>
+          <th>STATUS</th>
+          <th>ROLE</th>
+          <th>AUTH</th>
+          <th>ADMIN</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <th>{{forloop.counter}}</th>
+          <td>{{user.username}}</td>
+          <td>{{user.first_name}}{{ user.last_name }}</td>
+          <td>{{user.institution}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.state}}</td>
+          <td>{{user.role}}</td>
+          <td>{{user.level}}</td>
+            <td><a href="{{ user.get_absolute_url }}"><i class="xi-spinner-5 xi-spin"></i></a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if is_paginated %}
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    {% endif %}
+{% endblock %}
+
