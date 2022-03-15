@@ -3,9 +3,9 @@
 __pycache__
 venv
 db.sqlite3
-/static
+/static/smiles
 .DS_Store
 .ipynb_checkpoints
 *.ipynb
-secrets.json
+#secrets.json
 
