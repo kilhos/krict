@@ -666,7 +666,7 @@ def fn_result_report(pk):
         p.drawString(100, 200, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
     elif job_list.module_api.module_api_cd == 'CD005':
         p.drawString(100, 220, 'Human : ' + str(job_res_list.result_json['Human']))
-        p.drawString(100, 200, 'Mouse : ' + str(job_res_list.result_json['Mouse']))
+        #p.drawString(100, 200, 'Mouse : ' + str(job_res_list.result_json['Mouse']))
         p.drawString(100, 180, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
         
     # Close the PDF object cleanly, and we're done.
@@ -1020,7 +1020,7 @@ def herg_result_make_csv_file(job_list, job_res_list, module_api_list, module_li
 
 def ms_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
     csv_report = pd.DataFrame.from_records(
-        [{'Human': job_res_list.result_json['Human'], 'Mouse': job_res_list.result_json['Mouse'],
+        [{'Human': job_res_list.result_json['Human'], #'Mouse': job_res_list.result_json['Mouse'],
           'Elapsed time': job_res_list.result_json['time'],
           'Smiles': job_list.smiles}])
     # if not os.path.exists('C:\\job_result\\' + job_list.job_name + '.csv'):
@@ -1033,13 +1033,13 @@ def ms_result_make_csv_file(job_list, job_res_list, module_api_list, module_list
     writer = csv.writer(response)
     writer.writerow(
         ['Job_name', 'Writer', 'Report date', 'Module name', 'Module api name', 'Smiles', 'Job explanation',
-         'human', 'mouse', 'Elapsed time'
+         'human', 'Elapsed time'
          ])
     writer.writerow(
         [job_list.job_name, user_list.name, str(datetime.datetime.now().strftime('%Y-%m-%d')), module_list.module_name,
          module_api_list.module_api_name,
          job_list.smiles, job_list.job_explanation,
-         job_res_list.result_json['Human'], job_res_list.result_json['Mouse'],
+         job_res_list.result_json['Human'], #job_res_list.result_json['Mouse'],
          round(float(job_res_list.result_json['time']), 1)
          ])
     # response['Content-Length'] = os.path.getsize(read_csv_report)
