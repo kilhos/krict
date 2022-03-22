@@ -338,7 +338,7 @@ def smiles_result():
         elif running_job.module_api.module_api_cd == 'CD004':
             urls = "http://10.39.149.110:8082/predict_herg?content=" + parse.quote(content)
         elif running_job.module_api.module_api_cd == 'CD005':
-            urls = "http://10.39.149.110:8084/predict_ms?content=" + parse.quote(content)
+            urls = "http://10.39.149.110:8085/predict_ms?content=" + parse.quote(content)
         elif running_job.module_api.module_api_cd == 'CD006':
             urls = "http://10.39.149.110:8083/predict_chemtrans?content=" + parse.quote(content)
         print(urls)
