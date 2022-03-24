@@ -108,9 +108,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'krict_db_server',
-        'USER': 'root',
-        'PASSWORD': 'wodyd3161',
-        'HOST': 'localhost',
+        'USER': 'euclid05',
+        'PASSWORD': '1111',
+        'HOST': '192.168.1.201',
         'PORT': '3306',
     }
 }
