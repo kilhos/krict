@@ -1,9 +1,9 @@
 #!/bin/sh
 
+# 모두 yes 입력!
+
 echo 'setting...'
-# >>> conda initialize >>>
-# 아나콘다 가상환경 실행을 위해 필요한 부분
-# !! Contents within this block are managed by 'conda init' !!
+# CentOS에서 anaconda 가상 환경 실행을 위해 필요한 부분
 __conda_setup="$('/home/euclid05/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
@@ -15,7 +15,6 @@ else
     fi
 fi
 unset __conda_setup
-# <<< conda initialize <<<
 
 conda activate base
 #pip install --upgrade --ignore-installed pip setuptools
