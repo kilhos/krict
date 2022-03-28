@@ -27,3 +27,4 @@ sympy==1.10
 tzdata==2021.5
 unicodedata2
 urllib3==1.26.9
+pandas
