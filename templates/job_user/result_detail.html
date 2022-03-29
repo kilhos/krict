@@ -373,6 +373,44 @@
 
                     {% endif %}
 
+                    {% if result_detail.job.module_api.module_api_cd == 'CD007' %}
+                        <div class="detailSubTitle">
+                            <p>DILI :&nbsp</p>
+                            {% if result_detail.result_json.DILI|slice:":3"  > '0.5' %}
+                                <p>Toxic</p>
+                            {% else %}
+                                <p>Non-toxic</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time | floatformat }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Version :&nbsp</p>
+                            <p>{{ result_detail.result_json.version }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if result_detail.job.module_api.module_api_cd == 'CD008' %}
+                        <div class="detailSubTitle">
+                            <p>ar :&nbsp</p>
+                            {% if result_detail.result_json.ar|slice:":3"  > '0.5' %}
+                                <p>Permeable</p>
+                            {% else %}
+                                <p>Non-permeable</p>
+                            {% endif %}
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Elapsed time :&nbsp</p>
+                            <p>{{ result_detail.result_json.time | floatformat }}</p>
+                        </div>
+                        <div class="detailSubTitle">
+                            <p>Version :&nbsp</p>
+                            <p>{{ result_detail.result_json.version }}</p>
+                        </div>
+                    {% endif %}
+
                 </div>
             </div>
             <div class="detailContent">

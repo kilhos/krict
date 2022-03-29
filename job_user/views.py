@@ -330,17 +330,31 @@ def smiles_result():
         print(running_job.smiles)
         urls = ""
         if running_job.module_api.module_api_cd == 'CD001':
-            urls = "http://10.39.149.110:8081/predict_deep_hit?content=" + parse.quote(content)
+            # urls = "http://10.39.149.110:8081/predict_deep_hit?content=" + parse.quote(content)
+            #  urls = "http://192.168.1.209:8081/predict_deep_hit?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:9093/deep_hit/?smiles=" + parse.quote(content)
         elif running_job.module_api.module_api_cd == 'CD002':
-            urls = "http://10.39.149.110:8084/predict_bbbp?content=" + parse.quote(content)
+            # urls = "http://10.39.149.110:8084/predict_bbbp?content=" + parse.quote(content)
+            # urls = "http://192.168.1.209:9093/predict_bbbp?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:9093/bbb_permeability/?smiles=" + parse.quote(content)
         elif running_job.module_api.module_api_cd == 'CD003':
-            urls = "http://10.39.149.110:8082/predict_cyp?content=" + parse.quote(content)
+            # urls = "http://10.39.149.110:8082/predict_cyp?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:8082/predict_cyp?content=" + parse.quote(content)
         elif running_job.module_api.module_api_cd == 'CD004':
-            urls = "http://10.39.149.110:8082/predict_herg?content=" + parse.quote(content)
+            # urls = "http://10.39.149.110:8082/predict_herg?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:8082/predict_herg?content=" + parse.quote(content)
         elif running_job.module_api.module_api_cd == 'CD005':
-            urls = "http://10.39.149.110:8085/predict_ms?content=" + parse.quote(content)
+            # urls = "http://10.39.149.110:8085/predict_ms?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:8085/predict_ms?content=" + parse.quote(content)
         elif running_job.module_api.module_api_cd == 'CD006':
-            urls = "http://10.39.149.110:8083/predict_chemtrans?content=" + parse.quote(content)
+            # urls = "http://10.39.149.110:8083/predict_chemtrans?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:8083/predict_chemtrans?content=" + parse.quote(content)
+        elif running_job.module_api.module_api_cd == 'CD007':
+            # urls = "http://10.39.149.110:9093/predict_dili?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:9093/predict_dili?content=" + parse.quote(content)
+        elif running_job.module_api.module_api_cd == 'CD008':
+            # urls = "http://10.39.149.110:8521/predict_ar?content=" + parse.quote(content)
+            urls = "http://192.168.1.209:8521/predict_ar?content=" + parse.quote(content)
         print(urls)
         req = requests.get(urls)
         ## GET HTML SOURCE
@@ -668,6 +682,13 @@ def fn_result_report(pk):
         p.drawString(100, 220, 'Human : ' + str(job_res_list.result_json['Human']))
         #p.drawString(100, 200, 'Mouse : ' + str(job_res_list.result_json['Mouse']))
         p.drawString(100, 180, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
+    elif job_list.module_api.module_api_cd == 'CD007':
+        if float(str(job_res_list.result_json['DILI'])[:4]) > 0.5:
+            result = 'Toxic'
+        else:
+            result = 'Non-toxic'
+        p.drawString(100, 220, 'DILI : ' + result)
+        p.drawString(100, 200, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
         
     # Close the PDF object cleanly, and we're done.
     p.showPage()
@@ -900,6 +921,10 @@ def job_result_report_csv(request, pk):
         return ms_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list)
     elif module_api_list.module_api_cd == 'CD006':
         return chemtrans_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list)
+    elif module_api_list.module_api_cd == 'CD007':
+        return dili_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list)
+    elif module_api_list.module_api_cd == 'CD008':
+        return ar_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list)
 
 
 def deep_hit_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
@@ -1045,6 +1070,55 @@ def ms_result_make_csv_file(job_list, job_res_list, module_api_list, module_list
     # response['Content-Length'] = os.path.getsize(read_csv_report)
     return response
 
+def dili_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
+    csv_report = pd.DataFrame.from_records(
+        [{'DILI': job_res_list.result_json['DILI'], 'Elapsed time': job_res_list.result_json['time'],
+          'smiles': job_list.smiles}])
+    # if not os.path.exists('C:\\job_result\\' + job_list.job_name + '.csv'):
+    csv_report.to_csv(job_list.job_name + '.csv', index=False, mode='w', encoding='utf-8')
+    read_csv_report = pd.read_csv(job_list.job_name + '.csv')
+    file_name = "" + job_list.job_name + ".csv"
+    wrapper = FileWrapper(read_csv_report)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=' + file_name
+    writer = csv.writer(response)
+    writer.writerow(
+        ['Job name', 'Writer', 'Report date', 'Module name', 'Module apiname', 'Smiles', 'Job explanation',
+         'dili', 'Elapsed time'
+         ])
+    writer.writerow(
+        [job_list.job_name, user_list.name, str(datetime.datetime.now().strftime('%Y-%m-%d')), module_list.module_name,
+         module_api_list.module_api_name,
+         job_list.smiles, job_list.job_explanation,
+         job_res_list.result_json['DILI'], round(float(job_res_list.result_json['time']), 1)
+         ])
+    # response['Content-Length'] = os.path.getsize(read_csv_report)
+    return response
+
+def ar_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
+    csv_report = pd.DataFrame.from_records(
+        [{'ar': job_res_list.result_json['ar'], 'Elapsed time': job_res_list.result_json['time'],
+          'smiles': job_list.smiles}])
+    # if not os.path.exists('C:\\job_result\\' + job_list.job_name + '.csv'):
+    csv_report.to_csv(job_list.job_name + '.csv', index=False, mode='w', encoding='utf-8')
+    read_csv_report = pd.read_csv(job_list.job_name + '.csv')
+    file_name = "" + job_list.job_name + ".csv"
+    wrapper = FileWrapper(read_csv_report)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=' + file_name
+    writer = csv.writer(response)
+    writer.writerow(
+        ['Job name', 'Writer', 'Report date', 'Module name', 'Module apiname', 'Smiles', 'Job explanation',
+         'ar', 'Elapsed time'
+         ])
+    writer.writerow(
+        [job_list.job_name, user_list.name, str(datetime.datetime.now().strftime('%Y-%m-%d')), module_list.module_name,
+         module_api_list.module_api_name,
+         job_list.smiles, job_list.job_explanation,
+         job_res_list.result_json['ar'], round(float(job_res_list.result_json['time']), 1)
+         ])
+    # response['Content-Length'] = os.path.getsize(read_csv_report)
+    return response
 
 @login_required()
 @csrf_exempt
