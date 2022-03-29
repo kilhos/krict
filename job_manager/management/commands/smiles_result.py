@@ -22,17 +22,31 @@ class Command(BaseCommand):
             print(running_job.smiles)
             urls = ""
             if running_job.module_api.module_api_cd == 'CD001':
-                urls = "http://10.39.149.110:8081/predict_deep_hit?content=" + parse.quote(content)
+                # urls = "http://10.39.149.110:8081/predict_deep_hit?content=" + parse.quote(content)
+                #  urls = "http://192.168.1.209:8081/predict_deep_hit?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:9093/deep_hit/?smiles=" + parse.quote(content)
             elif running_job.module_api.module_api_cd == 'CD002':
-                urls = "http://10.39.149.110:8084/predict_bbbp?content=" + parse.quote(content)
+                # urls = "http://10.39.149.110:8084/predict_bbbp?content=" + parse.quote(content)
+                # urls = "http://192.168.1.209:9093/predict_bbbp?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:9093/bbb_permeability/?smiles=" + parse.quote(content)
             elif running_job.module_api.module_api_cd == 'CD003':
-                urls = "http://10.39.149.110:8082/predict_cyp?content=" + parse.quote(content)
+                # urls = "http://10.39.149.110:8082/predict_cyp?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:8082/predict_cyp?content=" + parse.quote(content)
             elif running_job.module_api.module_api_cd == 'CD004':
-                urls = "http://10.39.149.110:8082/predict_herg?content=" + parse.quote(content)
+                # urls = "http://10.39.149.110:8082/predict_herg?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:8082/predict_herg?content=" + parse.quote(content)
             elif running_job.module_api.module_api_cd == 'CD005':
-                urls = "http://10.39.149.110:8085/predict_ms?content=" + parse.quote(content)
+                # urls = "http://10.39.149.110:8085/predict_ms?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:8085/predict_ms?content=" + parse.quote(content)
             elif running_job.module_api.module_api_cd == 'CD006':
-                urls = "http://10.39.149.110:8083/predict_chemtrans?content=" + parse.quote(content)
+                # urls = "http://10.39.149.110:8083/predict_chemtrans?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:8083/predict_chemtrans?content=" + parse.quote(content)
+            elif running_job.module_api.module_api_cd == 'CD007':
+                # urls = "http://10.39.149.110:9093/predict_dili?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:9093/predict_dili?content=" + parse.quote(content)
+            elif running_job.module_api.module_api_cd == 'CD008':
+                # urls = "http://10.39.149.110:8521/predict_ar?content=" + parse.quote(content)
+                urls = "http://192.168.1.209:8521/predict_ar?content=" + parse.quote(content)
             print(urls)
             req = requests.get(urls)
             ## GET HTML SOURCE
