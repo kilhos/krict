@@ -1,116 +1,103 @@
 {% extends 'aside_menu.html' %}
 {% load static %}
 {% block menu_content %}
-    <!-- jsme start!  -->
-    <script type="text/javascript" language="javascript" src="{% static 'jsme/jsme.nocache.js' %}"></script>
-    <!-- jsme End!  -->
-
     <div class="contentWrap">
-    <div class="viewWrap">
-
-    <form name="job_form" action="{% url 'job_user:insert' %}" method="post" style="overflow:auto">
-        <div class="titleWrap">
-            <h1>Job Register</h1>
-
-        </div>
-        {% csrf_token %}
-        <!-- hidden 값 -->
-        <input type="hidden" name="user" value="{{ user.pk }}">
-        <input id="job_start_dt" type="hidden" name="job_start_dt" value="">
-
-        <label for="title"><strong>Job name</strong></label>
-        <input id="title" type="text" name="job_name" placeholder="Text input">
-
-        <label for="content"><strong>Job explanation</strong></label>
-        <textarea id="content" name="job_explanation" cols="30" rows="10" style="min-height: 100px"></textarea>
-
-        <div class="smilesModules">
-            <div class="smiles">
-                <label for="smilesResult"><strong>Smiles</strong></label>
-                <input id="smilesResult" name="smiles" type="text" placeholder="Smiles String" onchange="drawMolecularStructureBySmileExpression();">
-
-                <!-- smiles Module -->
-                <table style="min-width: 400px;">
-                    <tr>
-                        <td id="appletContainer" style="padding:0;"></td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="modules">
-                <label for="module"><strong>Module</strong></label>
-                {% if module_list %}
-                    <select id="module" name="module" onchange="module_api_change();">
-                        <option value="{{ module_list.id }}" {% if module_list.id == module_pk %} selected{% endif %}>
-                            {{ module_list.module_name }}
-                        </option>
-                    </select>
-                {% else %}
-                    {% if module %}
-                        <select id="module" name="module" onchange="module_api_change();">
-                        {% for module in module %}
-                            {% if user.level >= module.module_level %}
-                                <option value="{{ module.id }}" {% if module.id == module_pk %} selected{% endif %}>
-                                    {{ module.module_name }}
-                                </option>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                {% endif %}
-
-                <label for="api_select"><strong>Module api</strong></label>
-                <input id="api_select" i type="text" placeholder="Selected API" readonly value="{{ module_api.module_api_name }}">
-                <select class="multipleStyle" name="moduleApi" multiple onscroll="true" onchange="api_select_change();">
-                    {% for mod_api in module_api_list %}
-                        <option value="{{ mod_api.id }}" {% if mod_api.id == module_api_pk %}selected{% endif %}>
-                            {{ mod_api.module_api_name }}
-                        </option>
-                    {% endfor %}
-                </select>
-                <div style="text-align: right;">
-                    <input class="button register-btn-color" type="button" id="btn-submit" onclick="job_insert();" value="Run" style="margin-right:10px;">
-                    <input class="button-nonColor register-btn-color" type="button" id="btn-cancel" onclick="noSubmit();" value="Cancel">
+        <div class="viewWrap">
+            <form name="job_form" action="{% url 'job_user:insert' %}" method="post" style="overflow:auto">
+                <div class="titleWrap">
+                    <h1>Job Register</h1>
                 </div>
-            </div>
-        </div>
-    </form>
+                {% csrf_token %}
+                <!-- hidden 값 -->
+                <input type="hidden" name="user" value="{{ user.pk }}">
+                <input id="job_start_dt" type="hidden" name="job_start_dt" value="">
 
-    <!-- job regist js start!-->
-    <script type="text/javascript" src="{% static 'js/job/job_regist.js' %}"></script>
-    <!-- job regist js End!-->
-    <script type="text/javascript">
-        function sleep(delay) {
-            var start = new Date().getTime();
-            while (new Date().getTime() < start + delay) ;
-        }
+                <label for="title"><strong>Job name</strong></label>
+                <input id="title" type="text" name="job_name" placeholder="Text input">
 
-        function job_insert() {
-            if ($('#title').val().replace(/ /g, '').length===0||$('#title').val()==null ) {
-                alert('Please enter the job');
-                return false;
-            }
-            if ($('#smilesResult').val().replace(/ /g, '').length===0||$('#smilesResult').val()==null) {
-                alert('Please enter the smiles');
-                return false;
-            }
+                <label for="content"><strong>Job explanation</strong></label>
+                <textarea id="content" name="job_explanation" cols="30" rows="10" style="min-height: 100px"></textarea>
 
-            if (confirm('Do you want to run the job?') == true) {
-                $.ajax({
-                    url: '{% url "job_user:insert" %}',
-                    type: 'post',
-                    data: $("form[name='job_form']").serialize(),
-                    dataType: 'json',
-                    async: false,
-                    success: function (data) {
-                        location.href = '{% url "job_user:job_list" %}'
-                    },
-                    error: function () {
-                        console.log('실패');
+                <div class="smilesModules">
+                    <div class="smiles">
+                        <label for="smilesResult"><strong>Smiles</strong></label>
+                        <input id="smilesResult" name="smiles" type="text" placeholder="Smiles String" onchange="drawMolecularStructureBySmileExpression();">
+
+                        <!-- smiles Module -->
+                        <table style="min-width: 400px;">
+                            <tr>
+                                <td id="appletContainer" style="padding:0;"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="modules">
+                        <label for="module"><strong>Module</strong></label>
+                        {% if module_list %}
+                            <select id="module" name="module" onchange="module_api_change();">
+                                <option value="{{ module_list.id }}" {% if module_list.id == module_pk %} selected{% endif %}>
+                                    {{ module_list.module_name }}
+                                </option>
+                            </select>
+                        {% else %}
+                            {% if module %}
+                                <select id="module" name="module" onchange="module_api_change();">
+                                    {% for module in module %}
+                                        {% if user.level >= module.module_level %}
+                                            <option value="{{ module.id }}" {% if module.id == module_pk %} selected{% endif %}>
+                                                {{ module.module_name }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
+                        {% endif %}
+
+                        <label for="api_select"><strong>Module api</strong></label>
+                        <input id="api_select" type="text" placeholder="Selected API" readonly value="{{ module_api.module_api_name }}">
+                        <select class="multipleStyle" name="moduleApi" multiple onscroll="true" onchange="api_select_change();">
+                            {% for mod_api in module_api_list %}
+                                <option value="{{ mod_api.id }}" {% if mod_api.id == module_api_pk %}selected{% endif %}>
+                                    {{ mod_api.module_api_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div style="text-align: right;">
+                            <input class="button register-btn-color" type="button" id="btn-submit" onclick="job_insert();" value="Run">
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <script type="text/javascript" src="{% static 'jsme/jsme.nocache.js' %}"></script>
+            <script type="text/javascript">
+                function job_insert() {
+                    if ($('#title').val().replace(/ /g, '').length === 0 || $('#title').val() == null) {
+                        alert('Please enter the job');
+                        return false;
                     }
-                })
-            }
-        }
-    </script>
+                    if ($('#smilesResult').val().replace(/ /g, '').length === 0 || $('#smilesResult').val() == null) {
+                        alert('Please enter the smiles');
+                        return false;
+                    }
+
+                    if (confirm('Do you want to run the job?')) {
+                        $.ajax({
+                            url: '{% url "job_user:insert" %}',
+                            type: 'post',
+                            data: $("form[name='job_form']").serialize(),
+                            dataType: 'json',
+                            async: false,
+                            success: function (data) {
+                                location.href = '{% url "job_user:job_list" %}'
+                            },
+                            error: function () {
+                                console.log('실패');
+                            }
+                        })
+                    }
+                }
+            </script>
+        </div>
+    </div>
 {% endblock %}
 
-</div></div>

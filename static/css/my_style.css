@@ -37,7 +37,7 @@ body * {
 }
 
 .signupform p {
-!    margin-top: 10px;
+    margin-top: 10px;
     margin-bottom: 5px;
 }
 
@@ -506,15 +506,15 @@ form {
 }
 
 .viewWrap input, textarea, select, .smilesModules table {
-!    margin-bottom: var(--margin-size-10);
+    margin-bottom: var(--margin-size-10);
     margin-bottom: 15px;
     border-radius: 5px;
 }
 
 .idWrap input {
     width: 70%;
-!    margin-bottom: var(--margin-size-10);
-!    border-radius: 5px;
+    margin-bottom: var(--margin-size-10);
+    border-radius: 5px;
 }
 
 .idWrap input:focus, .formWrap input:focus, .viewWrap input:focus, textarea:focus, select:focus, .check-btn-color:focus, .submit-btn-color:focus {
@@ -570,7 +570,7 @@ form {
 
 .footer .footer_btm {
     display: flex;
-!    padding: 40px 0 40px 40px;
+    padding: 40px 0 40px 40px;
     padding: 10px 20px;
 }
 
@@ -745,7 +745,7 @@ textarea {
 #module_explanation {
     border-radius: 5px;
     font-size: 16px;
-!    padding: 10px;
+    padding: 10px;
     width: calc(80% - 20px);
 }
 
@@ -869,7 +869,7 @@ table tr {
 }
 
 table th, table td, tbody tr th {
-!    text-align: left !important;
+    text-align: left !important;
     padding: 0 10px;
     font-weight: 100;
 }
@@ -1125,7 +1125,7 @@ select {
 }
 
 .detailWrap p {
-    !margin-right: 60px; display: inline-block;
+    margin-right: 60px; display: inline-block;
 }
 
 .detailWrap strong {
@@ -1157,10 +1157,10 @@ select {
 }
 
 .dot {
-!    white-space: nowrap;
-!    overflow: hidden;
-!    text-overflow: ellipsis;
-!    width: 200px;    
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
 }
 
 .dot150 {
@@ -1172,7 +1172,7 @@ select {
 
 .dot400 p {
     word-break: break-all;
-    !width: 400px;
+    width: 400px;
     margin-right: 20px;
 }
 
@@ -1185,8 +1185,8 @@ input[type="file"] {
 }
 
 .thumbnail {
-!    width: 60%;
-!    height: auto;
+    width: 60%;
+    height: auto;
     overflow: hidden;
     padding: 10px 0;
 }
@@ -1209,7 +1209,7 @@ input[type="file"] {
 }
 
 .detailSubTitle img {
-!    margin-right: 10px;
+    margin-right: 10px;
 }
 
 .flexbox {
@@ -1374,7 +1374,7 @@ input[type="file"] {
     align-items: center;
     /* justify-content: center; */
     padding-left: 10px;
-!    border-bottom: 1px solid #6BC8BE;
+    border-bottom: 1px solid #6BC8BE;
     border-bottom: 1px solid #bfbfbf;    
     padding-top: 0;
 }
