@@ -29,7 +29,7 @@ from sympy.printing.codeprinter import requires
 
 from accounts.models import User
 from .calculate_property import prediction
-from .generate_molecule_image import fn_generate_mocule_image
+from .generate_molecule_image import make_smile_image
 from .models import *
 from job_user.include_views import fn_chemtrans_report
 from django.contrib.auth import update_session_auth_hash
@@ -440,15 +440,8 @@ def job_insert(request):
                              module_api=ModuleApi.objects.get(pk=request.POST['moduleApi']),
                              user=User.objects.get(pk=request.POST['user']))
 
-    ## 좀더 효율적인 방법 찾기 리펙토링 필수
-    # exec(open('C:\\euclid_krict\\euclid_krict\\media\\job_user\\module_api\\' + ModuleApi.objects.get(
-    #   pk=request.POST['moduleApi']), encoding='UTF8').read())
-    fn_generate_mocule_image(job.pk)
-    jobRes = JobResult()
-    jobRes.job = job
-    jobRes.result_json = {'time': 'no_data'}
-    jobRes.save()
-    print(job.pk)
+    make_smile_image(job.pk)
+    JobResult.objects.create(job_id=job.id, result_json={'time': 'no_data'})
 
     return HttpResponse(json.dumps({"pk": job.pk}, cls=DjangoJSONEncoder), content_type="application/json")
 
