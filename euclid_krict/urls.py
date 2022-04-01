@@ -2,15 +2,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-#from django_pydenticon.views import image as pydenticon_image
+
+# from django_pydenticon.views import image as pydenticon_image
 
 
 urlpatterns = [
+    path('', include('common.urls')),
     path('accounts/', include('accounts.urls')),
     path('manager/', include('job_manager.urls')),
-    path('', include('job_user.urls')),
+    path('job/', include('job_user.urls')),
     path('admin/', admin.site.urls),
-    #path('identicon/image/<path:data>/', pydenticon_image,name='pydenticon_image'),
+    # path('identicon/image/<path:data>/', pydenticon_image,name='pydenticon_image'),
 ]
 
 if settings.DEBUG:

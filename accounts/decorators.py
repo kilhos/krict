@@ -10,7 +10,7 @@ def admin_required(function):
     def wrap(request, *args, **kwargs):
         if request.user.role != 'sup':
             messages.info(request, "접근 권한이 없습니다.")
-            return redirect('job_user:main_page')
+            return redirect('common:main_page')
         return function(request, *args, **kwargs)
 
     return wrap
@@ -21,7 +21,7 @@ def logout_message_required(function):
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated:
             messages.info(request, "접속중인 사용자입니다.")
-            return redirect('job_user:main_page')
+            return redirect('common:main_page')
         return function(request, *args, **kwargs)
 
     return wrap

@@ -31,7 +31,7 @@
 		<th></th>
 		<th style="text-align: center">
 		  <div>
-		    <button style="width: 100px; height: 44px;" class="btn btn-primary ml-auto" onclick="location.href={% url 'job_user:job_register_page' %}">
+		    <button style="width: 100px; height: 44px;" class="btn btn-primary ml-auto" onclick="location.href='{% url 'job_user:job_register_page' %}'">
 		      Register
 		    </button>
 		  </div>
@@ -162,8 +162,7 @@
         } */
 
         function deleteJob(status, pk) {
-            var jobPk = parseInt(pk);
-            console.log(status)
+            const jobPk = parseInt(pk);
             if (status === 'complete' || status === 'fail') {
                 if (confirm('Are you sure you want to delete the job?')) {
                     $.ajax({
@@ -178,7 +177,6 @@
 
                     })
                 }
-
             } else {
                 alert('It can be deleted only when the project status is completed.');
             }

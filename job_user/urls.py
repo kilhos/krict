@@ -5,7 +5,6 @@ from job_user import views
 app_name = 'job_user'
 
 urlpatterns = [
-    path('', views.main_page, name='main_page'),
     path('job_list/', views.job_list, name='job_list'),
     path('job_detail_page/<int:pk>/', views.job_detail_page, name='job_detail_page'),
     path('job_detail_page/<int:pk>/module_id', views.job_detail_page_api, name='job_detail_page_api'),

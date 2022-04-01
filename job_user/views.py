@@ -40,25 +40,6 @@ from accounts.forms import PasswordChangeForm
 from urllib import parse
 
 
-# from background_task import background
-
-
-def main_page(request):
-    return render(request, '../templates/job_user/index.html')
-
-
-def siteMap(request):
-    return render(request, 'job_user/siteMap.html')
-
-
-def contactUs(request):
-    return render(request, 'job_user/../job_manager/templates/job_manager/contactUs.html')
-
-
-def privacyPolicy(request):
-    return render(request, 'job_user/privacyPolicy.html')
-
-
 def job_status_running_change_to_completed(request):
     status_running_list = list(Job.objects.all().filter(job_status='running').values('id'))
     for i, temp in enumerate(status_running_list):
