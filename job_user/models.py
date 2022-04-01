@@ -99,8 +99,21 @@ class Job(models.Model):
         return JobResult.objects.get(job_id=self.pk)
 
 
+class JobModule(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    module_api = models.ForeignKey(ModuleApi, on_delete=models.CASCADE)
+
+    class Meta:
+        managed = True
+        db_table = 'jobModule'
+
+    def __str__(self):
+        return str(self.pk)
+
+
 class JobResult(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    module_api = models.ForeignKey(JobModule, on_delete=models.CASCADE)
     result_json = JSONField(blank=True, null=True)
     create_date = models.DateTimeField(auto_now_add=True)
     modify_date = models.DateTimeField(auto_now=True)
@@ -111,3 +124,6 @@ class JobResult(models.Model):
 
     def __str__(self):
         return 'result_pk : ' + str(self.pk)
+
+
+
