@@ -210,11 +210,6 @@ class ResultListView(LoginRequiredMixin, ListView):
 job_result_page_list = ResultListView.as_view()
 
 
-@login_required()
-def profile(request):
-    return render(request, 'accounts/profile.html')
-
-
 @csrf_exempt
 @login_required()
 def profile_delete(request):
