@@ -7,11 +7,6 @@ def main_page(request):
     return render(request, '../templates/common/index.html')
 
 
-@login_required()
-def profile(request):
-    return render(request, 'accounts/profile.html')
-
-
 def siteMap(request):
     return render(request, '../templates/common/siteMap.html')
 
