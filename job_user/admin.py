@@ -24,7 +24,7 @@ class ModuleAdmin(admin.ModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'module_api', 'job_name', 'job_status']
+    list_display = ['id', 'user', 'job_name', 'job_status']
     list_display_links = ['id', 'user']
     search_fields = ['user']
 

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db.models import JSONField
 from django.urls import reverse
 
+
 class Module(models.Model):
     module_type_list = (
         ('type1', 'type1'),
@@ -53,7 +54,7 @@ class Category(models.Model):
 
 class ModuleApi(models.Model):
     module = models.ForeignKey(Module, models.CASCADE)
-    #module_api_name = models.FileField(blank=True, upload_to='job_user/module_api/')
+    # module_api_name = models.FileField(blank=True, upload_to='job_user/module_api/')
     module_api_name = models.CharField(max_length=100)
     module_api_cd = models.CharField(max_length=10, default="CD001")
 
@@ -74,7 +75,6 @@ class Job(models.Model):
         ('stop', 'stop'),
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    module_api = models.ForeignKey(ModuleApi, on_delete=models.CASCADE)
     job_name = models.CharField(max_length=100)
     job_status = models.CharField(choices=status_list, max_length=100, default='waiting')
     smiles = models.TextField()
@@ -90,7 +90,7 @@ class Job(models.Model):
         return self.job_name + '  pk(' + str(self.pk) + ')'
 
     def get_absolute_url(self):
-        return reverse('job_user:job_detail_page', args=[self.pk])
+        return reverse('job_user:job_detail', args=[self.pk])
 
     def get_result_url(self):
         return reverse('job_user:job_result_page', args=[self.pk])
@@ -124,6 +124,3 @@ class JobResult(models.Model):
 
     def __str__(self):
         return 'result_pk : ' + str(self.pk)
-
-
-
