@@ -1,6 +1,7 @@
 let jsmeApplet;
 
 $(document).ready(function () {
+    // drawMolecularStructureBySmileExpression();
     // var module_id = $("select[name='module']").val();
     // var module_api = $("select[name='moduleApi']");
     //
@@ -31,19 +32,31 @@ $(document).ready(function () {
     //     var module_api_name = $("select[name='moduleApi'] option:selected").attr('i');
     //     $('#api_select').val(module_api_name);
     // }, 100);
+
+    $('.selectpicker').on('show.bs.select', (e) => {
+        console.log("1")
+        console.log($(e.currentTarget))
+        $(e.currentTarget).next().css('border-color', '#007bff');
+    });
+
+    $('.selectpicker').on('hide.bs.select', (e) => {
+        $(e.currentTarget).next().css('border-color', '#bfbfbf');
+    });
 });
 
 function drawMolecularStructureBySmileExpression() {
-    const smilesInput = document.getElementById('smilesResult');
+    const smilesInput = document.getElementById('smiles');
 
-    if (smilesInput !== null)
+    if (smilesInput !== null) {
+
         jsmeApplet.readGenericMolecularInput(smilesInput.value);
+    }
 
 }
 
 function jsmeOnLoad() {
 
-    jsmeApplet = new JSApplet.JSME("appletContainer", "500px", "400px", {
+    jsmeApplet = new JSApplet.JSME("appletContainer", "550px", "400px", {
         //optional parameters
         "options": "oldlook,star"
     });
@@ -53,7 +66,7 @@ function jsmeOnLoad() {
     var patt = /\[([A-Za-z][a-z]?)H?\d*:\d+\]/g; //regexp pattern for numbered atom
     function showEvent(event) {
 
-        var log = document.getElementById("smilesResult");
+        var log = document.getElementById("smiles");
         log.value = event.src.smiles();
     }
 

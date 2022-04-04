@@ -525,7 +525,7 @@ form {
 
 .idWrap input:focus, .formWrap input:focus, .viewWrap input:focus, textarea:focus, select:focus, .check-btn-color:focus, .submit-btn-color:focus {
     outline: none !important;
-    border: 1px solid var(--color-mint) !important;
+    border: 1px solid #007bff !important;
 }
 
 .listWrap input:focus {
@@ -646,12 +646,16 @@ form {
 }
 
 .viewWrap {
-    margin-top: 90px;
+    margin-top: 50px;
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.cursor_pointer {
+    cursor: pointer;
 }
 
 .privacyPolicy {
@@ -788,7 +792,7 @@ textarea {
 
 /* left */
 .leftLayout {
-    padding-top: 100px;
+    padding-top: 50px;
     padding-left: 30px;
     padding-right: 30px;
     border-right: 1px solid var(--color-light-grey);
@@ -855,9 +859,29 @@ table tr {
 
 }
 
-.search input {
-    border: none;
+.btn-light:not(:disabled):not(.disabled).active, .btn-light:not(:disabled):not(.disabled):active, .show > .btn-light.dropdown-toggle {
+    background-color: initial !important;
+    border-color: #bfbfbf;
 }
+
+.bootstrap-select .dropdown-toggle:focus, .bootstrap-select > select.mobile-device:focus + .dropdown-toggle {
+    outline: 0 !important;
+    box-shadow: none !important;
+}
+
+.btn-light:not(:disabled):not(.disabled).active:focus, .btn-light:not(:disabled):not(.disabled):active:focus, .show > .btn-light.dropdown-toggle:focus {
+    border: 1px solid #007bff !important;
+}
+
+.form-control:focus {
+    outline: 0 !important;
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+/*.search input {*/
+/*    border: none;*/
+/*}*/
 
 .search label {
     font-size: 0.85em;
@@ -883,20 +907,20 @@ table tr {
     border: 1px solid var(--color-mint) !important;
 }
 
-.search span {
-    position: relative;
-    right: 20px;
-    top: 12px;
-}
+/*.search span {*/
+/*    position: relative;*/
+/*    right: 20px;*/
+/*    top: 12px;*/
+/*}*/
 
-.search span::after {
-    font-size: 1.5em;
-    position: relative;
-    right: 20px;
-    font-family: 'xeicon';
-    content: "\e97a";
-    top: -4px;
-}
+/*.search span::after {*/
+/*    font-size: 1.5em;*/
+/*    position: relative;*/
+/*    right: 20px;*/
+/*    font-family: 'xeicon';*/
+/*    content: "\e97a";*/
+/*    top: -4px;*/
+/*}*/
 
 .search input[type="checkbox"] {
     width: 40px;
@@ -909,6 +933,18 @@ table th, table td, tbody tr th {
     text-align: left !important;
     padding: 0 10px;
     font-weight: 100;
+}
+
+.bootstrap-select .bs-ok-default:after {
+    color: #007bff;
+}
+
+.search select, .search input, .search button {
+    border-color: #ced4da !important;
+}
+
+.search select:focus, .search input:focus, .search button:focus {
+
 }
 
 /*.jobTable th:last-child{
@@ -931,10 +967,6 @@ select {
     margin-right: 5px;
     min-width: 150px;
     text-indent: 6px;
-}
-
-#search_select {
-    min-height: 51px;
 }
 
 /* pagenation */
@@ -1195,11 +1227,15 @@ select {
     margin: 0;
 }
 
+.page_title {
+    margin: 50px 0;
+    padding: 0 50px;
+}
+
 .dot {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 200px;
 }
 
 .dot150 {
@@ -1217,6 +1253,12 @@ select {
 
 .viewWrap select {
 
+}
+
+.disabled_page_btn {
+    opacity: 0.5;
+    background-color: #e9ecef;
+    cursor: not-allowed;
 }
 
 input[type="file"] {
@@ -1438,5 +1480,9 @@ input[type="file"] {
 
 .btn.dropdown-toggle {
     border: 1px solid #bfbfbf;
+    background: white;
+}
+
+.show > .btn-light.dropdown-toggle {
     background: white;
 }
