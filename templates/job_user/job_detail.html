@@ -6,77 +6,70 @@
 {% endblock %}
 
 {% block menu_content %}
-    <!-- jsme start!  -->
-    <script type="text/javascript" language="javascript" src="{% static 'jsme/jsme.nocache.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/jsme.js' %}"></script>
-    <!-- jsme End!  -->
-    <script type="text/javascript" src="{% static 'js/job/job_detail.js' %}"></script>
-
     <div class="contentWrap">
-    <div class="viewWrap">
+        <div class="viewWrap">
+            <form name="job_Modify_form" method="post" action="modify" style="overflow:auto">{% csrf_token %}
+                <div class="titleWrap">
+                    <h1>Job Detail</h1>
+                    {#            <div>#}
+                    {#                <!--#}
+                    {#                수정버튼 안보이게#}
+                    {#                <input class="button-nonColor register-btn-color" type="button" id="btn-submit" value="Modify" onclick="job_Modify_submit();">#}
+                    {#                -->#}
+                    {#                <!--<input class="button register-btn-color" type="button" id="btn-Delete" value="Delete" onclick="job_Delete_submit();">-->#}
+                    {##}
+                    {#                <input class="button register-btn-color" type="button" id="btn-cancel" onclick="location.href='{% url 'job_user:job_list_page' %}'" value="Job list">#}
+                    {#            </div>#}
+                </div>
 
-    <form name="job_Modify_form" method="post" action="modify" style="overflow:auto">{% csrf_token %}
-        <div class="titleWrap">
-            <h1>Job Detail</h1>
-            <div>
-                <!--
-                수정버튼 안보이게
-                <input class="button-nonColor register-btn-color" type="button" id="btn-submit" value="Modify" onclick="job_Modify_submit();">
-                -->
-                <!--<input class="button register-btn-color" type="button" id="btn-Delete" value="Delete" onclick="job_Delete_submit();">-->
+                <!-- hidden 값 -->
+                <input type="hidden" name="user" value="{{ user.pk }}">
+                <input id="job_start_dt" type="hidden" name="job_start_dt" value="">
+                <input hidden id="module_api_id_check" type="text" name="" value="{{ job.module_api.id }}">
 
-                <input class="button register-btn-color" type="button" id="btn-cancel" onclick="location.href='{% url 'job_user:job_list' %}'" value="Job list">
-            </div>
+                <label for="title"><strong>Job name</strong></label>
+                <input id="title" name="job_name" type="text" placeholder="Text input" value="{{ job.job_name }}" style="background-color: #f5f5f5" readonly>
+
+                <label for="content"><strong>Job explanation</strong></label>
+                <!--        <textarea id="content" name="job_explanation" cols="30" rows="10" style="min-height: 100px" readonly>{{ job.job_explanation }}</textarea> -->
+                <!--	<textarea id="content" name="job_explanation" readonly>{{ job.job_explanation }}</textarea> -->
+                <input id="content" name="job_explanation" type="text" value="{{ job.job_explanation }}" style="background-color: #f5f5f5" readonly>
+
+                <div class="smilesModules">
+                    <div class="smiles">
+                        <label for="smilesResult"><strong>Smiles</strong></label>
+                        <input name="smiles" type="text" id="smilesResult" name="smiles" onchange="drawMolecularStructureBySmileExpression();" placeholder="smiles input" value="{{ job.smiles }}" style="background-color: #f5f5f5" readonly>
+
+                        <!-- smiles Module -->
+                        <table id="smiles_table" style="min-width: 400px;">
+                            <tr>
+                                <td id="appletContainer" style="padding: 0"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modules">
+                        <label for="module"><strong>Module</strong></label>
+                        <select id="module" name="module" disabled>
+                            {% for module in modules %}
+                                {% if module.id  == job.module_api.module_id %}
+                                    <option selected value="{{ module.id }}">{{ module.module_name }}</option>
+                                {% else %}
+                                    <option value="{{ module.id }}">{{ module.module_name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+
+                        {#                <strong>Module api</strong>#}
+                        {#                <input type="text" value={{ job.module_api.module_api_name }} style="background-color: #f5f5f5" readonly/>#}
+                        {#                <select id="module_check" class="multipleStyle" name="moduleApi" multiple onscroll="true" disabled>#}
+                        {#                    <option selected>#}
+                        {#                        {{ job.module_api.module_api_name }}#}
+                        {#                    </option>#}
+                        {#                </select>#}
+                    </div>
+                </div>
+            </form>
+
         </div>
-
-        <!-- hidden 값 -->
-        <input type="hidden" name="user" value="{{ user.pk }}">
-        <input id="job_start_dt" type="hidden" name="job_start_dt" value="">
-        <input hidden id="module_api_id_check" type="text" name="" value="{{ job.module_api.id }}">
-
-        <label for="title"><strong>Job name</strong></label>
-        <input id="title" name="job_name" type="text" placeholder="Text input" value="{{ job.job_name }}" style="background-color: #f5f5f5" readonly>
-
-        <label for="content"><strong>Job explanation</strong></label>
-<!--        <textarea id="content" name="job_explanation" cols="30" rows="10" style="min-height: 100px" readonly>{{ job.job_explanation }}</textarea> -->
-<!--	<textarea id="content" name="job_explanation" readonly>{{ job.job_explanation }}</textarea> -->
-	<input id="content" name="job_explanation" type="text" value="{{ job.job_explanation }}" style="background-color: #f5f5f5" readonly>
-
-        <div class="smilesModules">
-            <div class="smiles">
-                <label for="smilesResult"><strong>Smiles</strong></label>
-                <input name="smiles" type="text" id="smilesResult" name="smiles" onchange="drawMolecularStructureBySmileExpression();" placeholder="smiles input" value="{{ job.smiles }}" style="background-color: #f5f5f5" readonly>
-
-                <!-- smiles Module -->
-                <table id="smiles_table" style="min-width: 400px;">
-                    <tr>
-                        <td id="appletContainer" style="padding: 0"></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="modules">
-                <label for="module"><strong>Module</strong></label>
-                <select id="module" name="module" disabled>
-                    {% for module in modules %}
-                        {% if module.id  == job.module_api.module_id %}
-                            <option selected value="{{ module.id }}">{{ module.module_name }}</option>
-                        {% else %}
-                            <option value="{{ module.id }}">{{ module.module_name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-
-                <strong>Module api</strong>
-                <input type="text" value={{ job.module_api.module_api_name }} style="background-color: #f5f5f5" readonly/>
-                <select id="module_check" class="multipleStyle" name="moduleApi" multiple onscroll="true" disabled>
-                    <option selected>
-                        {{ job.module_api.module_api_name }}
-                    </option>
-                </select>
-            </div>
-        </div>
-    </form>
-
+    </div>
 {% endblock %}
-</div>
-</div>
