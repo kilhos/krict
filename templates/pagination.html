@@ -1,47 +1,44 @@
 {% load static %}
-{% if is_paginated %}
-    <div class="page-wrapper">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-                <li class="page-item prev">
-                    <a class="page-link"
-                       href="?page={{ page_obj.previous_page_number }}&job_name={{ request.GET.job_name }}&running={{ request.GET.running }}&complete={{ request.GET.complete }}&fail={{ request.GET.fail }}"
-                       tabindex="-1"><img src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev"></a>
-                </li>
-            {% else %}
-                <li class="page-item prev visibility_hidden">
-                    <a class="page-link" href="#" tabindex="-1"></a>
-                </li>
-            {% endif %}
-
-            {% for page in page_range %}
-                {% if page == page_obj.number %}
-                    <li class="page-item active">
-                        <a class="page-link" style="color:var(--color-white)"
-                           href="?page={{ page }}&job_name={{ request.GET.job_name }}&running={{ request.GET.running }}&complete={{ request.GET.complete }}&fail={{ request.GET.fail }}">
-                            {{ page }}
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="?page={{ page }}&job_name={{ request.GET.job_name }}&running={{ request.GET.running }}&complete={{ request.GET.complete }}&fail={{ request.GET.fail }}">
-                            {{ page }}
-                        </a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-                <li class="page-item next">
-                    <a class="page-link"
-                       href="?page={{ page_obj.next_page_number }}&job_name={{ request.GET.job_name }}&running={{ request.GET.running }}&complete={{ request.GET.complete }}&fail={{ request.GET.fail }}"><img src="{% static 'img/arrow-next.png' %}" alt="arrow-prev"></a>
-                </li>
-            {% else %}
-                <li class="page-item next visibility_hidden">
-                    <a class="page-link" href="#"></a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-{% endif %}
+<div class="page-wrapper">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item first">
+                <a class="page-link" href="?page=1"><img src="{% static 'img/arrow-first.png' %}" alt="arrow-first"></a>
+            </li>
+            <li class="page-item prev">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><img src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev"></a>
+            </li>
+        {% else %}
+            <li class="page-item first">
+                <a class="page-link disabled_page_btn"><img src="{% static 'img/arrow-first.png' %}" alt="arrow-first"></a>
+            </li>
+            <li class="page-item prev">
+                <a class="page-link disabled_page_btn"><img src="{% static 'img/arrow-prev.png' %}" alt="arrow-prev"></a>
+            </li>
+        {% endif %}
+        {% for page in page_range %}
+            <li class="page-item text-white {% if page == page_obj.number %} active {% endif %}">
+                <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+            </li>
+        {% empty %}
+            <li class="page-item text-white active">
+                <a class="page-link">1</a>
+            </li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li class="page-item next">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}"><img src="{% static 'img/arrow-next.png' %}" alt="arrow-next"></a>
+            </li>
+            <li class="page-item last">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"><img src="{% static 'img/arrow-last.png' %}" alt="arrow-last"></a>
+            </li>
+        {% else %}
+            <li class="page-item next">
+                <a class="page-link disabled_page_btn"><img src="{% static 'img/arrow-next.png' %}" alt="arrow-next"></a>
+            </li>
+            <li class="page-item last">
+                <a class="page-link disabled_page_btn"><img src="{% static 'img/arrow-last.png' %}" alt="arrow-last"></a>
+            </li>
+        {% endif %}
+    </ul>
+</div>
