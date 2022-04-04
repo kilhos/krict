@@ -32,7 +32,7 @@
                             <div>WORK</div>
                         </a>
                         <div class="dropdown-content">
-                            <a href="{% url 'job_user:job_list' %}">My job</a>
+                            <a href="{% url 'job_user:job_list_page' %}">My job</a>
                             <a href="{% url 'job_user:module_list' %}">Module</a>
                             <a href="{% url 'accounts:profile' %}">Profile</a>
                             {% if user.role == 'sup' %}

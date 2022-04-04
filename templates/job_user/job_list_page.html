@@ -1,0 +1,108 @@
+{% extends 'aside_menu.html' %}
+{% load static %}
+{% load html_extras %}
+{% block menu_content %}
+    <div class="w-100 h-100">
+        <h1 class="page_title">Job List</h1>
+        {# 작업 목록 필터링 및 등록하기 #}
+        <div class="d-flex" style="padding: 0 50px;">
+            <form class="search" method="get" action="{% url 'job_user:job_list_page' %}" style="height: 44px;">
+                <div class="input-group">
+                    <input class="form-control h-100" name="search_keyword" type="search" placeholder="Search keyword">
+                    <div class="input-group-append">
+                        <button class="btn" type="submit" style="border-left: 0; border-color: #ced4da;">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <button style="width: 100px; height: 44px;" class="btn btn-primary ml-auto" onclick="location.href='{% url 'job_user:job_register_page' %}'">
+                Register
+            </button>
+        </div>
+        {# 작업 목록 #}
+        <div class="listWrap" style="padding: 15px 50px;">
+            <table class="jobTable">
+                <colgroup>
+                    <col style="width: 5%;">
+                    <col style="width: 18%;">
+                    <col style="width: 17%;">
+                    <col style="width: 25%;">
+                    <col style="width: 15%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="text-center">#</th>
+                    <th>Job name</th>
+                    <th class="text-center">Smile</th>
+                    <th class="text-center">Modules</th>
+                    <th class="text-center">Running time (sec)</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for job in page_obj %}
+                    <tr class="cursor_pointer" onclick="location.href='{{ job.get_absolute_url }}'">
+                        <td class="text-center">{{ forloop.counter0|add:page_obj.start_index }}</td>
+                        <td>{{ job.job_name }}</td>
+                        <td class="text-center" style="max-width: 329px;">
+                            <div class="dot">{{ job.smiles }}</div>
+                        </td>
+                        <td class="text-center">
+                            {{ job.module_api.module.module_name }}
+                        </td>
+                        <td class="text-center">
+                            {% if job.job_status == 'complete' %}
+                                {{ job.get_job_results.result_json.time|floatformat }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <button class="{{ job.job_status|get_job_status_btn_class }}">
+                                <a {% if job.job_status == 'complete' %} href="{{ job.get_result_url }}"{% endif %}>
+                                    {{ job.job_status|title }}
+                                </a>
+                            </button>
+                        </td>
+                        <td class="text-center">
+                            <button class="button-status fail">
+                                <a href="#" onclick="deleteJob('{{ job.job_status }}','{{ job.pk }}')">Delete</a>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {# 페이지네이션 #}
+            {% include 'pagination.html' %}
+        </div>
+    </div>
+    <script>
+        function deleteJob(status, pk) {
+            const jobPk = parseInt(pk);
+            if (status === 'complete' || status === 'fail') {
+                if (confirm('Are you sure you want to delete the job?')) {
+                    $.ajax({
+                        url: "{% url 'job_user:delete_job' %}",
+                        type: 'post',
+                        data: {pk: jobPk},
+                        datatype: 'json',
+                        success: function (data) {
+                            location.reload();
+                        }
+
+
+                    })
+                }
+            } else {
+                alert('It can be deleted only when the project status is completed.');
+            }
+        }
+    </script>
+{% endblock %}
+

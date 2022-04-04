@@ -1,43 +1,37 @@
-import datetime, io, json, threading, csv, requests, os
-from _ast import expr
-from time import sleep
-import pandas as pd
-# import pymysql
-# smiles input result
+import csv
+import datetime
+import io
+import json
+import requests
+import threading
+from urllib import parse
+from wsgiref.util import FileWrapper
+
 import numpy as np
+import pandas as pd
 from bs4 import BeautifulSoup
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-# job pagination
+
 from django.core.paginator import Paginator
-# django ORM or Import
-from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, FileResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView
-from rdkit.Chem import AllChem
-from rdkit.Chem.rdDepictor import Compute2DCoords, GenerateDepictionMatching2DStructure
 from reportlab.pdfbase.ttfonts import TTFont
-# report Import
 from reportlab.pdfgen import canvas
-from django.db.models import Q
-from sympy import primenu
-from sympy.printing.codeprinter import requires
 
+from accounts.forms import PasswordChangeForm
 from accounts.models import User
+from euclid_krict import settings
+from job_user.include_views import fn_chemtrans_report
 from .calculate_property import prediction
 from .generate_molecule_image import make_smile_image
-from .models import *
-from job_user.include_views import fn_chemtrans_report
-from django.contrib.auth import update_session_auth_hash
-from wsgiref.util import FileWrapper
-from rdkit import Chem
-import matplotlib.pyplot as plt
-from accounts.forms import PasswordChangeForm
-from urllib import parse
+from .models import Job, ModuleApi, Module, JobResult, JobModule
 
 
 def job_status_running_change_to_completed(request):
@@ -48,46 +42,77 @@ def job_status_running_change_to_completed(request):
 
     job = Job()
 
-    return redirect('job_user:job_list')
+    return redirect('job_user:job_list_page')
 
 
-class JobListView(LoginRequiredMixin, ListView):
-    template_name = 'job_user/job_list.html'
-    context_object_name = 'jobs'
-    paginate_by = 10
+# class JobListView(LoginRequiredMixin, ListView):
+#     template_name = 'job_user/job_list_page.html'
+#     context_object_name = 'jobs'
+#     paginate_by = 10
+#
+#     def get_queryset(self):
+#         job_list = Job.objects.filter(user=self.request.user).order_by('-id')
+#         if self.request.GET.get('search_text'):
+#             if self.request.GET.get('search_select') == 'job_name':
+#                 job_list = Job.objects.filter(Q(user=self.request.user) & Q(job_name__icontains=self.request.GET.get('search_text', ''))).order_by('-create_date')
+#             elif self.request.GET.get('search_select') == 'module':
+#                 job_list = Job.objects.filter(Q(user=self.request.user) & Q(module_api__module__module_name__icontains=self.request.GET.get('search_text', ''))).order_by('-create_date')
+#             elif self.request.GET.get('search_select') == 'smiles':
+#                 job_list = Job.objects.filter(Q(user=self.request.user) & Q(smiles__icontains=self.request.GET.get('search_text', ''))).order_by('-create_date')
+#         return job_list
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(JobListView, self).get_context_data(**kwargs)
+#         paginator = context['paginator']
+#         page_numbers_range = 5
+#         max_index = len(paginator.page_range)
+#
+#         page = self.request.GET.get('page')
+#         current_page = int(page) if page else 1
+#
+#         start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+#         end_index = start_index + page_numbers_range
+#         if end_index >= max_index:
+#             end_index = max_index
+#
+#         page_range = paginator.page_range[start_index:end_index]
+#         context['page_range'] = page_range
+#         print(context['is_paginated'])
+#         print('is_paginated' in context)
+#         print(context)
+#         return context
+#
+#
+# job_list_page2 = JobListView.as_view()
 
-    def get_queryset(self):
-        job_list = Job.objects.filter(Q(user=self.request.user)).order_by('-create_date')
-        if self.request.GET.get('search_text'):
-            if self.request.GET.get('search_select') == 'job_name':
-                job_list = Job.objects.filter(Q(user=self.request.user) & Q(job_name__icontains=self.request.GET.get('search_text', ''))).order_by('-create_date')
-            elif self.request.GET.get('search_select') == 'module':
-                job_list = Job.objects.filter(Q(user=self.request.user) & Q(module_api__module__module_name__icontains=self.request.GET.get('search_text', ''))).order_by('-create_date')
-            elif self.request.GET.get('search_select') == 'smiles':
-                job_list = Job.objects.filter(Q(user=self.request.user) & Q(smiles__icontains=self.request.GET.get('search_text', ''))).order_by('-create_date')
-        return job_list
 
-    def get_context_data(self, **kwargs):
-        context = super(JobListView, self).get_context_data(**kwargs)
-        paginator = context['paginator']
-        page_numbers_range = 5
-        max_index = len(paginator.page_range)
+def job_list_page(request):
+    search_keyword = request.GET.get('search_keyword', None)
+    page = int(request.GET.get('page', 1))
+    print("search_keyword: ", search_keyword)
+    condition = Q()
+    condition.add(Q(user=request.user), Q.AND)
+    if search_keyword:
+        condition.add(Q(Q(job_name__icontains=search_keyword) | Q(smiles__icontains=search_keyword)), Q.AND)
 
-        page = self.request.GET.get('page')
-        current_page = int(page) if page else 1
+    job_list = Job.objects.filter(condition).order_by('-id')
+    print(job_list.query)
+    p = Paginator(job_list, 10)  # 한 페이지 당 10개씩
+    page_obj = p.get_page(page)
+    page_numbers_range = 5
 
-        start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
-        end_index = start_index + page_numbers_range
-        if end_index >= max_index:
-            end_index = max_index
+    max_index = len(p.page_range)
+    start_index = int((page - 1) / page_numbers_range) * page_numbers_range
+    end_index = start_index + page_numbers_range
+    if end_index >= max_index:
+        end_index = max_index
+    page_range = p.page_range[start_index:end_index]
 
-        page_range = paginator.page_range[start_index:end_index]
-        context['page_range'] = page_range
-
-        return context
-
-
-job_list = JobListView.as_view()
+    return render(request, 'job_user/job_list_page.html',
+                  {
+                      'page_obj': page_obj,
+                      'page_range': page_range
+                  })
 
 
 class JobDetailView(LoginRequiredMixin, DetailView):
