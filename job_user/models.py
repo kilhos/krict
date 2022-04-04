@@ -95,8 +95,11 @@ class Job(models.Model):
     def get_result_url(self):
         return reverse('job_user:job_result_page', args=[self.pk])
 
-    def get_job_result(self):
-        return JobResult.objects.get(job_id=self.pk)
+    def get_job_results(self):
+        return JobResult.objects.filter(job_id=self.pk).all()
+
+    def get_job_modules(self):
+        return JobModule.objects.filter(job_id=self.pk).all()
 
 
 class JobModule(models.Model):
