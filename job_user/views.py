@@ -125,35 +125,62 @@ job_detail_page = JobDetailView.as_view()
 
 
 @login_required
+def job_detail(request, job_id):
+    return render(
+        request,
+        "job_user/job_detail.html",
+        {
+            "job": Job.objects.get(pk=job_id),
+        },
+    )
+
+
+@login_required
 def job_register_page(request):
-    if request.POST.get('module_api_pk') is not None:
+    print(request.POST)
+    # 특정 모듈 선택
+    if request.POST.get('module_api_pk'):
         print(request.POST['module_api_name'])
         print(request.POST['module_api_pk'])
         print(request.POST['module_name'])
         choose_module_id = Module.objects.get(id=request.POST['module_api_pk']).id
         choose_module_api_id = ModuleApi.objects.get(module_api_name=request.POST['module_api_name']).id
-        # choose_module_api_name = ModuleApi.objects.get(module_api_name=request.POST['module_api_name']).module_api_name
         print(choose_module_id)
         print(choose_module_api_id)
         module_api_list = ModuleApi.objects.all()
         module_list = Module.objects.all()
-        context = {'module_api_list': module_api_list,
-                   'module': module_list, 'qs_len': len(module_list), 'module_pk': choose_module_id,
+        context = {'module': module_list, 'qs_len': len(module_list), 'module_pk': choose_module_id,
                    'module_api_pk': choose_module_api_id
                    }
-        return render(request, 'job_user/job_register.html', context)
-    module_api_list = ModuleApi.objects.all()
-    module_list = Module.objects.all()
-    context = {'module_api_list': module_api_list,
-               'module': module_list, 'qs_len': len(module_list)}
-    return render(request, 'job_user/job_register.html', context)
+        return render(request, 'job_user/job_register_page.html', context)
+    else:
+        return render(request, 'job_user/job_register_page.html', {'module_api_list': ModuleApi.objects.all()})
 
 
 @login_required
-def job_register(request):
-    if request.method == 'POST':
-        module = Module.objects.all()
-    return render(request, 'job_user/job_register.html', {'module': module})
+def register_job(request):
+    # Transaction 한 묶음으로
+    with transaction.atomic():
+        job_name = request.POST.get('job_name')
+        job_explanation = request.POST.get('job_explanation')
+        smiles = request.POST.get('smiles')
+
+        # Job 생성
+        job = Job.objects.create(job_name=job_name, job_explanation=job_explanation, smiles=smiles, job_status='waiting', user=request.user)
+
+        # Ternary Operator를 이용한 선택한 ModuleApi들의 id 리스트 얻기
+        module_api_id_list = list(ModuleApi.objects.values_list('id', flat=True)) if 'all' in request.POST.getlist('module_api_id_list') else request.POST.getlist('module_api_id_list')
+
+        # list comprehension을 이용한 JobModule 생성
+        [JobModule.objects.create(job=job, module_api_id=module_api_id) for module_api_id in module_api_id_list]
+
+        # 입력한 smiles의 png 이미지 생성
+        make_smile_image(job.pk)
+
+        # JobResult 생성
+        JobResult.objects.create(job_id=job.id, result_json={'time': 'no_data'})
+
+        return JsonResponse({"result": True})
 
 
 @login_required
@@ -251,7 +278,7 @@ def profile_modify(request):
     if request.method == "POST":
         id = request.POST['id']
         username = request.POST['username']
-        #password = request.POST['password']
+        # password = request.POST['password']
         name = request.POST['name']
 
         phone_number = request.POST['phoneNumber']
@@ -261,14 +288,14 @@ def profile_modify(request):
         department = request.POST['department']
         user = User.objects.get(pk=id)
         user.username = username
-        #user.password = password
+        # user.password = password
         user.name = name
         user.mobile_phone = mobile_phone_number
         user.company_phone = phone_number
         user.email = email
         user.institution = institution
         user.department = department
-        #User.set_password(user, password)
+        # User.set_password(user, password)
         user.save()
         update_session_auth_hash(request, user)
         return redirect('accounts:profile')
@@ -289,18 +316,7 @@ def user_password_change(request):
     else:
         form = PasswordChangeForm
 
-    return render(request, 'job_user/user_password_change.html', { 'form': form, })
-
-
-@login_required
-def job_register_page_api(request):
-    module_id = request.GET.get('module_id')
-
-    data = ModuleApi.objects.filter(module=module_id)
-
-    data = list(data.values())
-
-    return JsonResponse(data, safe=False)
+    return render(request, 'job_user/user_password_change.html', {'form': form, })
 
 
 @login_required
@@ -373,7 +389,6 @@ def job_thread_run():
 
 
 def check_job_result():
-
     job_results = JobResult.objects.all()
 
     for job_result in job_results:
@@ -430,46 +445,6 @@ def check_job_result():
         else:
             print('API가 안 돌아간 것?')
         """
-
-
-@login_required
-def job_insert(request):
-    job = Job.objects.create(job_name=request.POST['job_name'],
-                             job_explanation=request.POST['job_explanation'],
-                             smiles=request.POST['smiles'],
-                             job_status='waiting',
-                             module_api=ModuleApi.objects.get(pk=request.POST['moduleApi']),
-                             user=User.objects.get(pk=request.POST['user']))
-
-    make_smile_image(job.pk)
-    JobResult.objects.create(job_id=job.id, result_json={'time': 'no_data'})
-
-    return HttpResponse(json.dumps({"pk": job.pk}, cls=DjangoJSONEncoder), content_type="application/json")
-
-
-@login_required
-def job_detail_page_modify(request, pk):
-    page_res = request.session['page_res']
-    page_typeOfString = str(page_res)
-
-    if request.method == 'POST':
-        job = Job.objects.get(pk=pk)
-
-        job.job_name = request.POST['job_name']
-        job.job_explanation = request.POST['job_explanation']
-        job.smiles = request.POST['smiles']
-        job.job_start_dt = request.POST['job_start_dt']
-        job.module_api = ModuleApi.objects.get(pk=request.POST['moduleApi'])
-        job.user = User.objects.get(pk=request.POST['user'])
-        job.save()
-
-    return HttpResponseRedirect('/job_list/?page=' + page_typeOfString)
-
-
-@login_required
-def job_detail_page_delete(request, pk):
-    Job(pk).delete()
-    return render(request, 'job_user/job_list.html')
 
 
 @login_required
@@ -554,7 +529,7 @@ def fn_result_report(pk):
         if gr == 'nan' and de == 'nan' and fi == 'nan':
             probability = 'nan'
             result = 'hERG-nonblocker'
-        elif gr == 'nan' and de =='nan' and fi != 'nan':
+        elif gr == 'nan' and de == 'nan' and fi != 'nan':
             probability = fi
             if float(fi[:4]) > 0.5:
                 result = 'hERG-blocker'
@@ -628,7 +603,7 @@ def fn_result_report(pk):
             else:
                 result = 'hERG-nonblocker'
 
-        #p.drawString(100, 220, 'Probability : ' + probability)
+        # p.drawString(100, 220, 'Probability : ' + probability)
         p.drawString(100, 220, 'Result : ' + result)
         p.drawString(100, 200, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
     elif job_list.module_api.module_api_cd == 'CD002':
@@ -674,7 +649,7 @@ def fn_result_report(pk):
         p.drawString(100, 200, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
     elif job_list.module_api.module_api_cd == 'CD005':
         p.drawString(100, 220, 'Human : ' + str(job_res_list.result_json['Human']))
-        #p.drawString(100, 200, 'Mouse : ' + str(job_res_list.result_json['Mouse']))
+        # p.drawString(100, 200, 'Mouse : ' + str(job_res_list.result_json['Mouse']))
         p.drawString(100, 180, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
     elif job_list.module_api.module_api_cd == 'CD007':
         if float(str(job_res_list.result_json['DILI'])[:4]) > 0.5:
@@ -683,7 +658,7 @@ def fn_result_report(pk):
             result = 'Non-toxic'
         p.drawString(100, 220, 'DILI : ' + result)
         p.drawString(100, 200, 'Elapsed time : ' + str(round(float(job_res_list.result_json['time']), 1)))
-        
+
     # Close the PDF object cleanly, and we're done.
     p.showPage()
     p.save()
@@ -728,7 +703,7 @@ def module_search(request):
 def module_detail(request, pk):
     qs = Module.objects.get(pk=pk)
     module_api = ModuleApi.objects.all()
-    return render(request, 'job_user/module_detail.html', {'module': qs, 'module_api': module_api, 'pk': pk,})
+    return render(request, 'job_user/module_detail.html', {'module': qs, 'module_api': module_api, 'pk': pk, })
 
 
 def chemtrans_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
@@ -1039,7 +1014,7 @@ def herg_result_make_csv_file(job_list, job_res_list, module_api_list, module_li
 
 def ms_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
     csv_report = pd.DataFrame.from_records(
-        [{'Human': job_res_list.result_json['Human'], #'Mouse': job_res_list.result_json['Mouse'],
+        [{'Human': job_res_list.result_json['Human'],  # 'Mouse': job_res_list.result_json['Mouse'],
           'Elapsed time': job_res_list.result_json['time'],
           'Smiles': job_list.smiles}])
     # if not os.path.exists('C:\\job_result\\' + job_list.job_name + '.csv'):
@@ -1058,11 +1033,12 @@ def ms_result_make_csv_file(job_list, job_res_list, module_api_list, module_list
         [job_list.job_name, user_list.name, str(datetime.datetime.now().strftime('%Y-%m-%d')), module_list.module_name,
          module_api_list.module_api_name,
          job_list.smiles, job_list.job_explanation,
-         job_res_list.result_json['Human'], #job_res_list.result_json['Mouse'],
+         job_res_list.result_json['Human'],  # job_res_list.result_json['Mouse'],
          round(float(job_res_list.result_json['time']), 1)
          ])
     # response['Content-Length'] = os.path.getsize(read_csv_report)
     return response
+
 
 def dili_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
     csv_report = pd.DataFrame.from_records(
@@ -1089,6 +1065,7 @@ def dili_result_make_csv_file(job_list, job_res_list, module_api_list, module_li
     # response['Content-Length'] = os.path.getsize(read_csv_report)
     return response
 
+
 def ar_result_make_csv_file(job_list, job_res_list, module_api_list, module_list, user_list):
     csv_report = pd.DataFrame.from_records(
         [{'ar': job_res_list.result_json['ar'], 'Elapsed time': job_res_list.result_json['time'],
@@ -1114,9 +1091,10 @@ def ar_result_make_csv_file(job_list, job_res_list, module_api_list, module_list
     # response['Content-Length'] = os.path.getsize(read_csv_report)
     return response
 
+
 @login_required()
 @csrf_exempt
-def job_delete(request):
+def delete_job(request):
     job = Job.objects.get(pk=request.POST['pk'])
     job.delete()
-    return redirect("job_user:job_list")
+    return redirect("job_user:job_list_page")
